@@ -493,11 +493,11 @@ function renderGiveawayCard(g, mode) {
   var joined = myJoins.indexOf(g.id) !== -1;
   var endsIn = formatTimeLeft(g.endsAt);
   var photoHtml;
-  var src = g.photoUrl || '';
-  if (src) {
-    photoHtml = '<img class="giveaway-photo" src="' + escapeHtml(src) + '" alt="">';
-  } else if (g.photoFileId) {
-    photoHtml = '<div class="giveaway-photo-placeholder">🎁</div>';
+  if (g.photoFileId) {
+    var photoSrc = API_URL + '/api/photo/' + encodeURIComponent(g.photoFileId);
+    photoHtml = '<img class="giveaway-photo" src="' + photoSrc + '" alt="">';
+  } else if (g.photoUrl) {
+    photoHtml = '<img class="giveaway-photo" src="' + escapeHtml(g.photoUrl) + '" alt="">';
   } else {
     photoHtml = '<div class="giveaway-photo-placeholder">🎁</div>';
   }

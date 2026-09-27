@@ -19,20 +19,15 @@
   }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 90px;
-    overflow-x: hidden;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; padding-bottom: 90px; overflow-x: hidden;
   }
   .bg-glow { position: fixed; border-radius: 50%; filter: blur(100px); z-index: 0; pointer-events: none; opacity: 0.3; }
   .g1 { width: 400px; height: 400px; background: #667eea; top: -180px; right: -150px; }
   .g2 { width: 350px; height: 350px; background: #f093fb; bottom: -150px; left: -150px; }
   .g3 { width: 300px; height: 300px; background: #fbbf24; top: 40%; right: -100px; opacity: 0.15; }
-
   .topbar {
-    position: sticky; top: 0;
-    padding: 14px 16px;
+    position: sticky; top: 0; padding: 14px 16px;
     display: flex; justify-content: space-between; align-items: center;
     z-index: 50;
     background: rgba(13, 13, 20, 0.85);
@@ -42,8 +37,7 @@
   .logo {
     font-size: 19px; font-weight: 800;
     background: linear-gradient(135deg, #a78bfa, #f093fb);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .user-badge {
@@ -59,14 +53,11 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 11px; font-weight: 800;
   }
-
   .main { position: relative; z-index: 2; padding: 16px; }
-
   .tabs {
     display: flex; gap: 6px;
     background: rgba(255,255,255,0.05);
-    padding: 4px; border-radius: 14px;
-    margin-bottom: 20px;
+    padding: 4px; border-radius: 14px; margin-bottom: 20px;
   }
   .tab {
     flex: 1; text-align: center; padding: 10px 8px;
@@ -78,34 +69,27 @@
     color: #fff;
     box-shadow: 0 4px 12px rgba(102,126,234,0.4);
   }
-
   .giveaway {
-    background: var(--card);
-    border-radius: 20px; overflow: hidden;
-    margin-bottom: 16px;
-    border: 1px solid rgba(255,255,255,0.06);
+    background: var(--card); border-radius: 20px; overflow: hidden;
+    margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.06);
     animation: fadeIn .4s;
   }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-
   .giveaway-photo { width: 100%; height: 180px; object-fit: cover; background: linear-gradient(135deg, #1a1a2e, #2a2a4e); display: block; }
   .giveaway-photo-placeholder {
     width: 100%; height: 180px;
     background: linear-gradient(135deg, #4c1d95, #7c3aed);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 64px;
+    display: flex; align-items: center; justify-content: center; font-size: 64px;
   }
   .giveaway-badge {
     position: absolute; top: 12px; right: 12px;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
     padding: 6px 12px; border-radius: 10px;
     font-size: 11px; font-weight: 800;
     text-transform: uppercase; letter-spacing: 0.5px;
   }
   .giveaway-badge.active { color: var(--success); border: 1px solid var(--success); }
   .giveaway-badge.finished { color: var(--hint); border: 1px solid var(--hint); }
-
   .giveaway-body { padding: 16px; }
   .giveaway-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; line-height: 1.3; }
   .giveaway-desc {
@@ -116,17 +100,14 @@
     display: inline-block;
     background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(245,158,11,0.15));
     border: 1px solid rgba(251,191,36,0.3);
-    color: var(--gold);
-    padding: 6px 12px; border-radius: 10px;
-    font-size: 12px; font-weight: 700;
-    margin-bottom: 12px;
+    color: var(--gold); padding: 6px 12px; border-radius: 10px;
+    font-size: 12px; font-weight: 700; margin-bottom: 12px;
   }
   .giveaway-meta {
     display: flex; gap: 12px; font-size: 12px;
     color: var(--hint); margin-bottom: 14px; flex-wrap: wrap;
   }
   .giveaway-meta span { display: flex; align-items: center; gap: 4px; }
-
   .giveaway-footer { display: flex; gap: 8px; align-items: center; }
   .btn {
     padding: 12px 18px; border: none; border-radius: 12px;
@@ -155,16 +136,13 @@
     border: 1px solid rgba(255,255,255,0.12);
   }
   .btn-small.danger {
-    background: rgba(239,68,68,0.15);
-    color: var(--danger);
+    background: rgba(239,68,68,0.15); color: var(--danger);
     border-color: rgba(239,68,68,0.3);
   }
-
   .winner-block {
     background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(245,158,11,0.05));
     border: 1px solid rgba(251,191,36,0.3);
-    border-radius: 14px;
-    padding: 12px 14px;
+    border-radius: 14px; padding: 12px 14px;
     display: flex; align-items: center; gap: 10px;
   }
   .winner-block .icon { font-size: 24px; }
@@ -174,7 +152,6 @@
     text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;
   }
   .winner-block .name { font-size: 14px; font-weight: 800; color: var(--gold); }
-
   .form-card {
     background: var(--card); border-radius: 20px;
     padding: 20px; border: 1px solid rgba(255,255,255,0.06);
@@ -190,23 +167,19 @@
     width: 100%;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 13px 14px;
+    border-radius: 12px; padding: 13px 14px;
     font-size: 15px; color: var(--text); font-family: inherit;
     outline: none; transition: border-color .2s;
   }
   .input:focus, .textarea:focus { border-color: var(--accent); }
   .input::placeholder, .textarea::placeholder { color: rgba(255,255,255,0.3); }
   .textarea { resize: vertical; min-height: 80px; }
-
   .form-row { display: flex; gap: 10px; }
   .form-row .field { flex: 1; }
-
   .form-btn {
-    width: 100%; padding: 16px;
-    border: none; border-radius: 14px;
-    font-size: 15px; font-weight: 800;
-    cursor: pointer; font-family: inherit;
+    width: 100%; padding: 16px; border: none; border-radius: 14px;
+    font-size: 15px; font-weight: 800; cursor: pointer;
+    font-family: inherit;
     background: linear-gradient(135deg, #a78bfa, #f093fb);
     color: #fff; margin-top: 8px;
     box-shadow: 0 6px 24px rgba(167,139,250,0.4);
@@ -214,12 +187,34 @@
   }
   .form-btn:active { transform: scale(0.98); }
   .form-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
+  .photo-drop {
+    width: 100%; min-height: 140px;
+    background: rgba(255,255,255,0.05);
+    border: 2px dashed rgba(255,255,255,0.15);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; overflow: hidden;
+    transition: border-color .2s, background .2s;
+    position: relative; padding: 12px;
+  }
+  .photo-drop:active { border-color: var(--accent); background: rgba(167,139,250,0.08); }
+  .photo-preview { max-width: 100%; max-height: 200px; border-radius: 10px; display: block; }
+  .photo-remove {
+    position: absolute; top: 8px; right: 8px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(239,68,68,0.95); color: #fff; border: none;
+    font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .photo-placeholder-icon { font-size: 36px; text-align: center; margin-bottom: 6px; }
+  .photo-placeholder-text { font-size: 13px; color: var(--hint); text-align: center; }
+  .photo-status { font-size: 12px; color: var(--hint); margin-top: 6px; text-align: center; }
+  .photo-status.success { color: var(--success); }
+  .photo-status.error { color: var(--danger); }
   .empty { text-align: center; padding: 60px 20px; color: var(--hint); }
   .empty-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
   .empty-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
   .empty-sub { font-size: 13px; line-height: 1.5; }
-
   .loading { text-align: center; padding: 40px; color: var(--hint); font-size: 14px; }
   .spinner {
     width: 32px; height: 32px;
@@ -230,16 +225,12 @@
     margin: 0 auto 12px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .toast {
-    position: fixed;
-    bottom: 100px; left: 50%;
+    position: fixed; bottom: 100px; left: 50%;
     transform: translateX(-50%) translateY(100px);
     background: rgba(30,30,50,0.98);
-    backdrop-filter: blur(20px);
-    color: #fff;
-    padding: 14px 22px;
-    border-radius: 14px;
+    backdrop-filter: blur(20px); color: #fff;
+    padding: 14px 22px; border-radius: 14px;
     font-size: 14px; font-weight: 700;
     z-index: 999;
     transition: transform .35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -250,58 +241,42 @@
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.success { border-color: var(--success); background: linear-gradient(135deg, rgba(16,185,129,0.95), rgba(4,120,87,0.95)); }
   .toast.error { border-color: var(--danger); background: linear-gradient(135deg, rgba(239,68,68,0.95), rgba(185,28,28,0.95)); }
-
   .admin-fab {
-    position: fixed;
-    bottom: 24px; right: 20px;
-    width: 60px; height: 60px;
-    border-radius: 50%;
+    position: fixed; bottom: 24px; right: 20px;
+    width: 60px; height: 60px; border-radius: 50%;
     background: linear-gradient(135deg, #a78bfa, #f093fb);
-    border: none; color: #fff;
-    font-size: 28px; cursor: pointer;
+    border: none; color: #fff; font-size: 28px; cursor: pointer;
     box-shadow: 0 10px 30px rgba(167,139,250,0.5);
-    z-index: 100;
-    display: none;
+    z-index: 100; display: none;
     align-items: center; justify-content: center;
     transition: transform .15s;
   }
   .admin-fab:active { transform: scale(0.92); }
   .admin-fab.show { display: flex; }
-
   .modal-overlay {
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
     z-index: 500; display: none;
     align-items: flex-end; justify-content: center;
   }
   .modal-overlay.show { display: flex; animation: fadeIn .25s; }
-
   .modal {
-    background: var(--bg);
-    width: 100%; max-width: 500px;
-    border-radius: 24px 24px 0 0;
-    max-height: 85vh; overflow-y: auto;
-    animation: slideUp .3s;
-    padding-bottom: 20px;
+    background: var(--bg); width: 100%; max-width: 500px;
+    border-radius: 24px 24px 0 0; max-height: 85vh; overflow-y: auto;
+    animation: slideUp .3s; padding-bottom: 20px;
   }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: none; } }
-
   .modal-header {
-    padding: 16px 20px;
-    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
     border-bottom: 1px solid rgba(255,255,255,0.06);
-    position: sticky; top: 0;
-    background: var(--bg); z-index: 10;
+    position: sticky; top: 0; background: var(--bg); z-index: 10;
   }
   .modal-title { font-size: 17px; font-weight: 800; }
   .modal-close {
     width: 36px; height: 36px; border-radius: 50%;
-    background: rgba(255,255,255,0.08);
-    border: none; color: var(--text);
-    font-size: 18px; cursor: pointer;
+    background: rgba(255,255,255,0.08); border: none;
+    color: var(--text); font-size: 18px; cursor: pointer;
   }
-
   .participant {
     display: flex; align-items: center; gap: 12px;
     padding: 12px 20px;
@@ -376,8 +351,19 @@
       </div>
 
       <div class="field">
-        <label class="field-label">Фото (URL)</label>
-        <input class="input" id="fPhoto" placeholder="https://...jpg (необязательно)" type="url">
+        <label class="field-label">Фото</label>
+        <input type="file" id="fPhotoFile" accept="image/*" style="display:none" onchange="onPhotoSelected(event)">
+        <div id="photoDrop" class="photo-drop" onclick="document.getElementById('fPhotoFile').click()">
+          <div id="photoPreviewWrap" style="display:none;">
+            <img id="photoPreview" class="photo-preview" alt="">
+            <button type="button" class="photo-remove" onclick="event.stopPropagation(); removePhoto();">✕</button>
+          </div>
+          <div id="photoPlaceholder">
+            <div class="photo-placeholder-icon">📸</div>
+            <div class="photo-placeholder-text">Нажми, чтобы выбрать фото</div>
+          </div>
+        </div>
+        <div id="photoStatus" class="photo-status"></div>
       </div>
 
       <div class="form-row">
@@ -418,15 +404,9 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ==========================================================
-// КОНФИГ
-// ==========================================================
 var API_URL = 'https://summer-sound-ec0f.gej75636.workers.dev';
 var ADMIN_ID = 8309824939;
 
-// ==========================================================
-// TELEGRAM
-// ==========================================================
 var tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
@@ -446,9 +426,6 @@ function initUserUI() {
   }
 }
 
-// ==========================================================
-// СОСТОЯНИЕ
-// ==========================================================
 var giveaways = [];
 var myJoins = [];
 try {
@@ -456,9 +433,6 @@ try {
   if (saved) myJoins = JSON.parse(saved);
 } catch(e) {}
 
-// ==========================================================
-// API через XMLHttpRequest (работает везде)
-// ==========================================================
 function apiRequest(method, path, body) {
   return new Promise(function(resolve, reject) {
     var xhr = new XMLHttpRequest();
@@ -467,11 +441,8 @@ function apiRequest(method, path, body) {
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4) {
         if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            resolve(JSON.parse(xhr.responseText));
-          } catch (e) {
-            reject(new Error('Bad JSON: ' + xhr.responseText.slice(0, 100)));
-          }
+          try { resolve(JSON.parse(xhr.responseText)); }
+          catch (e) { reject(new Error('Bad JSON: ' + xhr.responseText.slice(0, 100))); }
         } else {
           reject(new Error('HTTP ' + xhr.status + ': ' + xhr.responseText.slice(0, 100)));
         }
@@ -485,37 +456,22 @@ function apiRequest(method, path, body) {
 function apiGet(path) { return apiRequest('GET', path); }
 function apiPost(path, body) { return apiRequest('POST', path, body); }
 
-// ==========================================================
-// ЗАГРУЗКА
-// ==========================================================
 function loadGiveaways() {
   apiGet('/api/giveaways')
-    .then(function(data) {
-      giveaways = data || [];
-      renderAll();
-    })
-    .catch(function(e) {
-      showToast('Ошибка загрузки: ' + e.message, 'error');
-    })
-    .finally(function() {
-      document.getElementById('loadingActive').style.display = 'none';
-    });
+    .then(function(data) { giveaways = data || []; renderAll(); })
+    .catch(function(e) { showToast('Ошибка загрузки: ' + e.message, 'error'); })
+    .finally(function() { document.getElementById('loadingActive').style.display = 'none'; });
 }
 
-function renderAll() {
-  renderActive();
-  renderFinished();
-}
+function renderAll() { renderActive(); renderFinished(); }
 
 function renderActive() {
   var active = giveaways.filter(function(g) { return g.status === 'active'; });
   var el = document.getElementById('listActive');
   if (active.length === 0) {
-    el.innerHTML = '<div class="empty">' +
-      '<div class="empty-icon">🎈</div>' +
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🎈</div>' +
       '<div class="empty-title">Пока нет активных розыгрышей</div>' +
-      '<div class="empty-sub">Заходи позже — админ скоро что-то запустит!</div>' +
-      '</div>';
+      '<div class="empty-sub">Заходи позже — админ скоро что-то запустит!</div></div>';
     return;
   }
   el.innerHTML = active.map(function(g) { return renderGiveawayCard(g, 'active'); }).join('');
@@ -525,11 +481,9 @@ function renderFinished() {
   var finished = giveaways.filter(function(g) { return g.status === 'finished'; });
   var el = document.getElementById('listFinished');
   if (finished.length === 0) {
-    el.innerHTML = '<div class="empty">' +
-      '<div class="empty-icon">🏆</div>' +
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🏆</div>' +
       '<div class="empty-title">Завершённых пока нет</div>' +
-      '<div class="empty-sub">Когда розыгрыш закончится — появится здесь</div>' +
-      '</div>';
+      '<div class="empty-sub">Когда розыгрыш закончится — появится здесь</div></div>';
     return;
   }
   el.innerHTML = finished.map(function(g) { return renderGiveawayCard(g, 'finished'); }).join('');
@@ -538,10 +492,12 @@ function renderFinished() {
 function renderGiveawayCard(g, mode) {
   var joined = myJoins.indexOf(g.id) !== -1;
   var endsIn = formatTimeLeft(g.endsAt);
-
   var photoHtml;
-  if (g.photoUrl) {
-    photoHtml = '<img class="giveaway-photo" src="' + escapeHtml(g.photoUrl) + '" alt="">';
+  var src = g.photoUrl || '';
+  if (src) {
+    photoHtml = '<img class="giveaway-photo" src="' + escapeHtml(src) + '" alt="">';
+  } else if (g.photoFileId) {
+    photoHtml = '<div class="giveaway-photo-placeholder">🎁</div>';
   } else {
     photoHtml = '<div class="giveaway-photo-placeholder">🎁</div>';
   }
@@ -551,91 +507,107 @@ function renderGiveawayCard(g, mode) {
     if (isAdmin) {
       footer = '<div class="giveaway-footer">' +
         '<button class="btn btn-primary ' + (joined ? 'joined' : '') + '" onclick="toggleJoin(\'' + g.id + '\', ' + joined + ')">' +
-          (joined ? '✓ Участвуешь' : '🎯 Участвовать') +
-        '</button>' +
+          (joined ? '✓ Участвуешь' : '🎯 Участвовать') + '</button>' +
         '<button class="btn btn-small" onclick="openParticipants(\'' + g.id + '\')">👥 ' + (g.participantCount || 0) + '</button>' +
-        '<button class="btn btn-small danger" onclick="pickWinner(\'' + g.id + '\')">🎲</button>' +
-        '</div>';
+        '<button class="btn btn-small danger" onclick="pickWinner(\'' + g.id + '\')">🎲</button></div>';
     } else {
       footer = '<div class="giveaway-footer">' +
         '<button class="btn btn-primary ' + (joined ? 'joined' : '') + '" onclick="toggleJoin(\'' + g.id + '\', ' + joined + ')">' +
-          (joined ? '✓ Участвуешь' : '🎯 Участвовать') +
-        '</button>' +
-        '<button class="btn btn-small" onclick="openParticipants(\'' + g.id + '\')">👥 ' + (g.participantCount || 0) + '</button>' +
-        '</div>';
+          (joined ? '✓ Участвуешь' : '🎯 Участвовать') + '</button>' +
+        '<button class="btn btn-small" onclick="openParticipants(\'' + g.id + '\')">👥 ' + (g.participantCount || 0) + '</button></div>';
     }
   } else {
     if (g.winnerId) {
       var isMe = String(g.winnerId) === String(user.id);
-      footer = '<div class="winner-block">' +
-        '<div class="icon">' + (isMe ? '🏆' : '🎉') + '</div>' +
-        '<div class="info">' +
-          '<div class="label">' + (isMe ? 'ТЫ ПОБЕДИЛ!' : 'Победитель') + '</div>' +
-          '<div class="name">' + escapeHtml(g.winnerName || 'Участник') + '</div>' +
-        '</div></div>';
+      footer = '<div class="winner-block"><div class="icon">' + (isMe ? '🏆' : '🎉') + '</div>' +
+        '<div class="info"><div class="label">' + (isMe ? 'ТЫ ПОБЕДИЛ!' : 'Победитель') + '</div>' +
+        '<div class="name">' + escapeHtml(g.winnerName || 'Участник') + '</div></div></div>';
     }
   }
 
   var metaHtml = '<div class="giveaway-meta">' +
     '<span>⏰ ' + (mode === 'active' ? endsIn : 'Завершён') + '</span>' +
-    '<span>👥 ' + (g.participantCount || 0) + ' участников</span>' +
-    '</div>';
+    '<span>👥 ' + (g.participantCount || 0) + ' участников</span></div>';
 
-  return '<div class="giveaway">' +
-    '<div style="position:relative;">' +
-      photoHtml +
-      '<div class="giveaway-badge ' + mode + '">' + (mode === 'active' ? '🔥 Активен' : '🏁 Завершён') + '</div>' +
-    '</div>' +
+  return '<div class="giveaway"><div style="position:relative;">' + photoHtml +
+    '<div class="giveaway-badge ' + mode + '">' + (mode === 'active' ? '🔥 Активен' : '🏁 Завершён') + '</div></div>' +
     '<div class="giveaway-body">' +
       '<div class="giveaway-title">' + escapeHtml(g.title) + '</div>' +
       (g.description ? '<div class="giveaway-desc">' + escapeHtml(g.description) + '</div>' : '') +
       (g.prize ? '<div class="giveaway-prize">🏆 ' + escapeHtml(g.prize) + '</div>' : '') +
-      metaHtml +
-      footer +
-    '</div></div>';
+      metaHtml + footer + '</div></div>';
 }
 
-// ==========================================================
-// УЧАСТИЕ
-// ==========================================================
 function toggleJoin(id, joined) {
-  if (joined) {
-    showToast('Ты уже участвуешь 👌');
-    return;
-  }
+  if (joined) { showToast('Ты уже участвуешь 👌'); return; }
   apiPost('/api/join', {
-    giveawayId: id,
-    userId: user.id,
+    giveawayId: id, userId: user.id,
     firstName: user.first_name || '',
     lastName: user.last_name || '',
     username: user.username || '',
   }).then(function(res) {
-    if (res.error) {
-      showToast(res.error, 'error');
-      return;
-    }
+    if (res.error) { showToast(res.error, 'error'); return; }
     myJoins.push(id);
     try { localStorage.setItem('myJoins', JSON.stringify(myJoins)); } catch(e) {}
     showToast('🎉 Ты участвуешь!', 'success');
     loadGiveaways();
-  }).catch(function(e) {
-    showToast('Ошибка: ' + e.message, 'error');
-  });
+  }).catch(function(e) { showToast('Ошибка: ' + e.message, 'error'); });
 }
 
-// ==========================================================
-// СОЗДАНИЕ
-// ==========================================================
+var photoFileId = '';
+var photoUrl = '';
+
+function onPhotoSelected(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    setPhotoStatus('Файл больше 5 МБ', 'error'); return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var base64 = e.target.result;
+    document.getElementById('photoPreview').src = base64;
+    document.getElementById('photoPreviewWrap').style.display = 'block';
+    document.getElementById('photoPlaceholder').style.display = 'none';
+    setPhotoStatus('⏳ Загружаю в Telegram...', '');
+    uploadPhoto(base64, file.type);
+  };
+  reader.readAsDataURL(file);
+}
+
+function uploadPhoto(base64, contentType) {
+  apiPost('/api/upload-photo', { base64: base64, contentType: contentType })
+    .then(function(res) {
+      if (res.error) { setPhotoStatus('Ошибка: ' + res.error, 'error'); return; }
+      photoFileId = res.fileId || '';
+      photoUrl = res.url || '';
+      setPhotoStatus('✅ Фото загружено', 'success');
+    })
+    .catch(function(e) { setPhotoStatus('Ошибка: ' + e.message, 'error'); });
+}
+
+function removePhoto() {
+  photoFileId = ''; photoUrl = '';
+  document.getElementById('photoPreviewWrap').style.display = 'none';
+  document.getElementById('photoPlaceholder').style.display = 'block';
+  document.getElementById('fPhotoFile').value = '';
+  setPhotoStatus('', '');
+}
+
+function setPhotoStatus(text, type) {
+  var el = document.getElementById('photoStatus');
+  el.textContent = text;
+  el.className = 'photo-status';
+  if (type) el.classList.add(type);
+}
+
 function createGiveaway() {
   if (!isAdmin) { showToast('Только админ может создавать', 'error'); return; }
-
   var title = document.getElementById('fTitle').value.trim();
   var desc = document.getElementById('fDesc').value.trim();
   var prize = document.getElementById('fPrize').value.trim();
-  var photo = document.getElementById('fPhoto').value.trim();
   var hours = Number(document.getElementById('fHours').value) || 24;
   var unit = document.getElementById('fUnit').value;
-
   if (!title) { showToast('Впиши название!', 'error'); return; }
 
   var durationMs = hours * 60 * 60 * 1000;
@@ -647,86 +619,63 @@ function createGiveaway() {
   btn.textContent = '⏳ Создаём...';
 
   apiPost('/api/create', {
-    adminId: user.id,
-    title: title,
-    description: desc,
-    prize: prize,
-    photoUrl: photo,
+    adminId: user.id, title: title, description: desc,
+    prize: prize, photoUrl: photoUrl, photoFileId: photoFileId,
     endsAt: Date.now() + durationMs,
   }).then(function(res) {
     if (res.error) { showToast(res.error, 'error'); return; }
-    showToast('✨ Розыгрыш создан!', 'success');
+    showToast('✨ Создано! Уведомление разослано', 'success');
     document.getElementById('fTitle').value = '';
     document.getElementById('fDesc').value = '';
     document.getElementById('fPrize').value = '';
-    document.getElementById('fPhoto').value = '';
     document.getElementById('fHours').value = 24;
+    removePhoto();
     switchTab('active');
     loadGiveaways();
-  }).catch(function(e) {
-    showToast('Ошибка: ' + e.message, 'error');
-  }).finally(function() {
-    btn.disabled = false;
-    btn.textContent = '✨ Создать розыгрыш';
-  });
+  }).catch(function(e) { showToast('Ошибка: ' + e.message, 'error'); })
+    .finally(function() {
+      btn.disabled = false;
+      btn.textContent = '✨ Создать розыгрыш';
+    });
 }
 
-// ==========================================================
-// ВЫБОР ПОБЕДИТЕЛЯ
-// ==========================================================
 function pickWinner(id) {
   if (!isAdmin) return;
   if (!confirm('Выбрать случайного победителя? Необратимо.')) return;
   apiPost('/api/pick-winner', { giveawayId: id, adminId: user.id })
     .then(function(res) {
       if (res.error) { showToast(res.error, 'error'); return; }
-      showToast('🏆 Победитель: ' + (res.winner.firstName || 'Участник'), 'success');
+      showToast('🏆 Победитель выбран!', 'success');
       loadGiveaways();
     })
-    .catch(function(e) {
-      showToast('Ошибка: ' + e.message, 'error');
-    });
+    .catch(function(e) { showToast('Ошибка: ' + e.message, 'error'); });
 }
 
-// ==========================================================
-// УЧАСТНИКИ
-// ==========================================================
 function openParticipants(id) {
-  apiGet('/api/giveaway/' + id)
-    .then(function(data) {
-      var parts = data.participants || [];
-      var el = document.getElementById('participantsList');
-      if (parts.length === 0) {
-        el.innerHTML = '<div class="empty" style="padding:40px 20px;">' +
-          '<div class="empty-icon">👥</div>' +
-          '<div class="empty-title">Пока никто не участвует</div></div>';
-      } else {
-        el.innerHTML = parts.map(function(p) {
-          var initials = (p.firstName ? p.firstName[0] : '') + (p.lastName ? p.lastName[0] : '');
-          return '<div class="participant">' +
-            '<div class="participant-avatar">' + escapeHtml((initials || '?').toUpperCase()) + '</div>' +
-            '<div class="participant-info">' +
-              '<div class="participant-name">' + escapeHtml([p.firstName, p.lastName].filter(Boolean).join(' ') || 'Участник') + '</div>' +
-              (p.username ? '<div class="participant-username">@' + escapeHtml(p.username) + '</div>' : '') +
-            '</div>' +
-            '<div class="participant-date">' + formatDate(p.joinedAt) + '</div>' +
-            '</div>';
-        }).join('');
-      }
-      document.getElementById('participantsModal').classList.add('show');
-    })
-    .catch(function(e) {
-      showToast('Ошибка: ' + e.message, 'error');
-    });
+  apiGet('/api/giveaway/' + id).then(function(data) {
+    var parts = data.participants || [];
+    var el = document.getElementById('participantsList');
+    if (parts.length === 0) {
+      el.innerHTML = '<div class="empty" style="padding:40px 20px;"><div class="empty-icon">👥</div><div class="empty-title">Пока никто не участвует</div></div>';
+    } else {
+      el.innerHTML = parts.map(function(p) {
+        var initials = (p.firstName ? p.firstName[0] : '') + (p.lastName ? p.lastName[0] : '');
+        return '<div class="participant">' +
+          '<div class="participant-avatar">' + escapeHtml((initials || '?').toUpperCase()) + '</div>' +
+          '<div class="participant-info"><div class="participant-name">' +
+          escapeHtml([p.firstName, p.lastName].filter(Boolean).join(' ') || 'Участник') + '</div>' +
+          (p.username ? '<div class="participant-username">@' + escapeHtml(p.username) + '</div>' : '') +
+          '</div><div class="participant-date">' + formatDate(p.joinedAt) + '</div></div>';
+      }).join('');
+    }
+    document.getElementById('participantsModal').classList.add('show');
+  }).catch(function(e) { showToast('Ошибка: ' + e.message, 'error'); });
 }
 
 function closeParticipants() {
   document.getElementById('participantsModal').classList.remove('show');
 }
 
-// ==========================================================
-// ТАБЫ
-// ==========================================================
 function switchTab(tab) {
   var tabs = document.querySelectorAll('.tab');
   for (var i = 0; i < tabs.length; i++) {
@@ -744,9 +693,6 @@ document.querySelectorAll('.tab').forEach(function(t) {
 
 function openCreateTab() { switchTab('create'); }
 
-// ==========================================================
-// УТИЛИТЫ
-// ==========================================================
 function escapeHtml(s) {
   return String(s || '').replace(/[&<>"']/g, function(c) {
     return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
@@ -784,9 +730,6 @@ setInterval(function() {
   if (hasActive) renderActive();
 }, 60000);
 
-// ==========================================================
-// СТАРТ
-// ==========================================================
 initUserUI();
 loadGiveaways();
 </script>

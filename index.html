@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body style="font-family:sans-serif; text-align:center; padding:40px;">
+  <h1>Привет, <span id="name">друг</span>!</h1>
+  <p>Это моё Mini App 🎉</p>
+  <button onclick="tg.close()" style="padding:10px 20px;">Закрыть</button>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+    const u = tg.initDataUnsafe?.user;
+    if (u) document.getElementById('name').textContent = u.first_name;
+  </script>
+</body>
+</html>

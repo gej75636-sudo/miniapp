@@ -11,7 +11,6 @@
   :root {
     --bg: #0b0d17;
     --card: #151827;
-    --card-hover: #1a1f33;
     --border: rgba(255,255,255,0.07);
     --accent: #7c5cff;
     --accent2: #ff5c9d;
@@ -37,7 +36,6 @@
     font-weight: 500;
   }
 
-  /* Фоновые градиенты — сдержанно */
   body::before {
     content: '';
     position: fixed;
@@ -144,7 +142,7 @@
     box-shadow: 0 6px 16px rgba(124,92,255,0.35);
   }
 
-  /* Карточка розыгрыша */
+  /* Карточка */
   .giveaway {
     background: var(--card);
     border-radius: 20px;
@@ -216,7 +214,6 @@
     border: 1px solid rgba(255,255,255,0.15);
   }
 
-  /* Overlay градиент на фото снизу */
   .giveaway-photo-wrap::after {
     content: '';
     position: absolute;
@@ -566,7 +563,7 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ====== ТОСТ — ИСПРАВЛЕННЫЙ ====== */
+  /* Тост */
   .toast {
     position: fixed;
     left: 50%;
@@ -605,7 +602,7 @@
     box-shadow: 0 12px 40px rgba(239,68,68,0.4);
   }
 
-  /* FAB */
+  /* FAB админа */
   .admin-fab {
     position: fixed;
     bottom: 24px;
@@ -629,6 +626,49 @@
   }
   .admin-fab:active { transform: scale(0.9); }
   .admin-fab.show { display: flex; }
+
+  /* Кнопка музыки */
+  .audio-btn {
+    position: fixed;
+    bottom: 32px;
+    left: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(21,24,39,0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: transform .2s, background .2s;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    padding: 0;
+  }
+  .audio-btn.show { display: flex; }
+  .audio-btn:active { transform: scale(0.9); }
+  .audio-btn.playing {
+    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
+    border-color: transparent;
+    box-shadow: 0 8px 24px rgba(124,92,255,0.5);
+  }
+  .audio-btn.playing::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid rgba(124,92,255,0.5);
+    animation: audioPulse 1.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes audioPulse {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.15); opacity: 0; }
+  }
 
   /* Модалка */
   .modal-overlay {
@@ -826,6 +866,12 @@
 </div>
 
 <button class="admin-fab" id="adminFab" onclick="openCreateTab()">+</button>
+
+<!-- Аудио -->
+<audio id="bgMusic" loop preload="none">
+  <source src="https://gej75636-sudo.github.io/miniapp/music/track.mp3" type="audio/mpeg">
+</audio>
+<button class="audio-btn" id="audioBtn" onclick="toggleMusic()">🔇</button>
 
 <div class="modal-overlay" id="participantsModal" onclick="if(event.target===this)closeParticipants()">
   <div class="modal">
@@ -1114,6 +1160,7 @@ function createGiveaway() {
   }).then(function(res) {
     if (res.error) { showToast(res.error, 'error'); return; }
     showToast('✨ Розыгрыш создан!', 'success');
+    playSound('create');
     document.getElementById('fTitle').value = '';
     document.getElementById('fDesc').value = '';
     document.getElementById('fPrize').value = '';
@@ -1138,6 +1185,7 @@ function pickWinner(id) {
     .then(function(res) {
       if (res.error) { showToast(res.error, 'error'); return; }
       showToast('🏆 Победитель определён!', 'success');
+      playSound('win');
       loadGiveaways();
     })
     .catch(function(e) { showToast('Ошибка', 'error'); });
@@ -1233,22 +1281,192 @@ function formatDate(ts) {
 }
 
 // ==========================================================
-// ТОСТ — ИСПРАВЛЕННЫЙ
+// 🎵 МУЗЫКА И ЗВУКИ
+// ==========================================================
+var bgMusic = document.getElementById('bgMusic');
+var audioBtn = document.getElementById('audioBtn');
+var musicEnabled = false;
+var audioCtx = null;
+
+// Проверяем сохранённую настройку
+try {
+  var musicSaved = localStorage.getItem('musicEnabled');
+  if (musicSaved === '1') musicEnabled = true;
+} catch(e) {}
+
+function initAudioCtx() {
+  if (audioCtx) return;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  } catch(e) {}
+}
+
+// ==========================================================
+// Звуковые эффекты (генерируются через Web Audio API)
+// ==========================================================
+function playSound(type) {
+  initAudioCtx();
+  if (!audioCtx) return;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  var now = audioCtx.currentTime;
+  var osc, gain;
+
+  if (type === 'join') {
+    // Приятный аккорд C-E-G при участии
+    osc = audioCtx.createOscillator();
+    gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(523.25, now);
+    osc.frequency.setValueAtTime(659.25, now + 0.1);
+    osc.frequency.setValueAtTime(783.99, now + 0.2);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.15, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.5);
+  } else if (type === 'win') {
+    // Победная мелодия
+    var notes = [523.25, 659.25, 783.99, 1046.50];
+    notes.forEach(function(freq, i) {
+      var o = audioCtx.createOscillator();
+      var g = audioCtx.createGain();
+      o.type = 'sine';
+      o.frequency.value = freq;
+      var t = now + i * 0.12;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.2, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      o.start(t);
+      o.stop(t + 0.4);
+    });
+  } else if (type === 'error') {
+    osc = audioCtx.createOscillator();
+    gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(200, now);
+    osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.2);
+  } else if (type === 'create') {
+    osc = audioCtx.createOscillator();
+    gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(300, now);
+    osc.frequency.exponentialRampToValueAtTime(900, now + 0.2);
+    gain.gain.setValueAtTime(0.12, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.3);
+  }
+}
+
+// ==========================================================
+// Фоновая музыка
+// ==========================================================
+function updateAudioBtn() {
+  if (!audioBtn) return;
+  audioBtn.classList.toggle('playing', musicEnabled);
+  audioBtn.textContent = musicEnabled ? '🔊' : '🔇';
+  audioBtn.classList.add('show');
+}
+
+function playMusic() {
+  if (!bgMusic) return;
+  bgMusic.volume = 0;
+  var p = bgMusic.play();
+  if (p && p.then) {
+    p.then(function() {
+      var v = 0;
+      var fade = setInterval(function() {
+        v += 0.02;
+        if (v >= 0.3) {
+          bgMusic.volume = 0.3;
+          clearInterval(fade);
+        } else {
+          bgMusic.volume = v;
+        }
+      }, 40);
+    }).catch(function(e) {
+      console.log('Autoplay blocked:', e);
+    });
+  }
+}
+
+function stopMusic() {
+  if (!bgMusic) return;
+  var v = bgMusic.volume;
+  var fade = setInterval(function() {
+    v -= 0.03;
+    if (v <= 0) {
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+      clearInterval(fade);
+    } else {
+      bgMusic.volume = v;
+    }
+  }, 40);
+}
+
+function toggleMusic() {
+  musicEnabled = !musicEnabled;
+  try { localStorage.setItem('musicEnabled', musicEnabled ? '1' : '0'); } catch(e) {}
+  if (musicEnabled) {
+    playMusic();
+  } else {
+    stopMusic();
+  }
+  updateAudioBtn();
+}
+
+// ==========================================================
+// Автозапуск музыки после первого тапа
+// ==========================================================
+var firstTapDone = false;
+function handleFirstTap() {
+  if (firstTapDone) return;
+  firstTapDone = true;
+  initAudioCtx();
+
+  if (musicEnabled) {
+    playMusic();
+  }
+  updateAudioBtn();
+
+  document.removeEventListener('click', handleFirstTap);
+  document.removeEventListener('touchstart', handleFirstTap);
+}
+document.addEventListener('click', handleFirstTap);
+document.addEventListener('touchstart', handleFirstTap);
+
+// ==========================================================
+// ТОСТ
 // ==========================================================
 var toastTimer = null;
 function showToast(text, type) {
   var t = document.getElementById('toast');
 
-  // сброс
+  // 🔊 звук
+  if (type === 'success') playSound('join');
+  if (type === 'error') playSound('error');
+
   if (toastTimer) clearTimeout(toastTimer);
   t.classList.remove('show');
   t.className = 'toast';
 
-  // небольшая задержка чтобы анимация сработала заново
   setTimeout(function() {
     t.textContent = text;
     if (type) t.classList.add(type);
-    // force reflow
     void t.offsetWidth;
     t.classList.add('show');
 
@@ -1269,6 +1487,11 @@ setInterval(function() {
 // ==========================================================
 initUserUI();
 loadGiveaways();
+
+// Если музыка уже включена — показываем кнопку сразу
+if (musicEnabled) {
+  updateAudioBtn();
+}
 </script>
 </body>
 </html>

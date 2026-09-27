@@ -3,378 +3,424 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>🎁 Розыгрыши</title>
+<title>Розыгрыши</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
   :root {
-    --bg: #07070f;
-    --card: rgba(26, 26, 46, 0.6);
-    --card-solid: #16162a;
-    --accent: #a78bfa;
-    --accent2: #f093fb;
-    --gold: #fbbf24;
-    --text: #fff;
-    --hint: rgba(255,255,255,0.5);
-    --success: #4ade80;
-    --danger: #ef4444;
+    --bg: #0b0d17;
+    --card: #151827;
+    --card-hover: #1a1f33;
+    --border: rgba(255,255,255,0.07);
+    --accent: #7c5cff;
+    --accent2: #ff5c9d;
+    --gold: #ffc93c;
+    --text: #ffffff;
+    --text2: rgba(255,255,255,0.65);
+    --text3: rgba(255,255,255,0.4);
+    --success: #2ee68e;
+    --danger: #ff4d6d;
   }
 
-  html, body {
-    overscroll-behavior: none;
-  }
+  html, body { overscroll-behavior-y: none; }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     padding-bottom: 100px;
+    -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
     position: relative;
+    font-weight: 500;
   }
 
-  /* Анимированный фон */
-  .bg-glow {
+  /* Фоновые градиенты — сдержанно */
+  body::before {
+    content: '';
     position: fixed;
-    border-radius: 50%;
-    filter: blur(120px);
-    z-index: 0;
+    top: -200px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(124,92,255,0.25) 0%, transparent 65%);
     pointer-events: none;
-    opacity: 0.4;
-    animation: float 15s ease-in-out infinite;
+    z-index: 0;
+    filter: blur(60px);
   }
-  @keyframes float {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(30px, -30px) scale(1.1); }
-  }
-  .g1 { width: 400px; height: 400px; background: #667eea; top: -180px; right: -150px; animation-delay: 0s; }
-  .g2 { width: 350px; height: 350px; background: #f093fb; bottom: -150px; left: -150px; animation-delay: 3s; }
-  .g3 { width: 300px; height: 300px; background: #fbbf24; top: 40%; right: -100px; opacity: 0.2; animation-delay: 6s; }
-
-  /* Звёзды */
-  .stars {
+  body::after {
+    content: '';
     position: fixed;
-    inset: 0;
-    z-index: 0;
+    bottom: -200px; left: -100px;
+    width: 450px; height: 450px;
+    background: radial-gradient(circle, rgba(255,92,157,0.18) 0%, transparent 65%);
     pointer-events: none;
-  }
-  .star {
-    position: absolute;
-    background: #fff;
-    border-radius: 50%;
-    animation: twinkle 3s ease-in-out infinite;
-  }
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.2; }
-    50% { opacity: 0.9; }
+    z-index: 0;
+    filter: blur(60px);
   }
 
   /* Топбар */
   .topbar {
-    position: sticky; top: 0;
+    position: sticky;
+    top: 0;
     padding: 14px 16px;
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     z-index: 50;
-    background: rgba(7, 7, 15, 0.7);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: rgba(11,13,23,0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
   }
   .logo {
-    font-size: 20px; font-weight: 900;
-    background: linear-gradient(135deg, #a78bfa 0%, #f093fb 50%, #fbbf24 100%);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: shimmerText 4s ease-in-out infinite;
-    letter-spacing: -0.5px;
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: -0.4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  @keyframes shimmerText {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+  .logo-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
+    box-shadow: 0 0 12px rgba(124,92,255,0.7);
   }
   .user-badge {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 6px 12px; border-radius: 14px;
-    font-size: 12px; font-weight: 700;
-    display: flex; align-items: center; gap: 6px;
-    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px 5px 5px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    max-width: 180px;
+  }
+  .user-badge span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .avatar-mini {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 800;
-    box-shadow: 0 2px 8px rgba(102,126,234,0.5);
+    font-size: 11px; font-weight: 900;
+    flex-shrink: 0;
+    color: #fff;
   }
 
   .main { position: relative; z-index: 2; padding: 16px; }
 
-  /* Табы — стильные */
+  /* Табы */
   .tabs {
-    display: flex; gap: 6px;
-    background: rgba(255,255,255,0.04);
+    display: flex;
+    gap: 6px;
+    background: var(--card);
     padding: 5px;
-    border-radius: 18px;
-    margin-bottom: 22px;
-    border: 1px solid rgba(255,255,255,0.06);
-    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
   }
   .tab {
-    flex: 1; text-align: center; padding: 11px 8px;
-    border-radius: 14px; font-size: 12px; font-weight: 800;
-    color: var(--hint); cursor: pointer;
-    transition: all .3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    letter-spacing: 0.3px;
-    position: relative;
-    overflow: hidden;
+    flex: 1;
+    text-align: center;
+    padding: 10px 8px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text3);
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: -0.2px;
   }
   .tab.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #7c5cff, #6647e0);
     color: #fff;
-    box-shadow: 0 6px 20px rgba(102,126,234,0.5);
-    transform: scale(1.02);
-  }
-  .tab.active::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    animation: tabShine 2s ease-in-out infinite;
-  }
-  @keyframes tabShine {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    box-shadow: 0 6px 16px rgba(124,92,255,0.35);
   }
 
   /* Карточка розыгрыша */
   .giveaway {
-    background: linear-gradient(135deg, rgba(26,26,46,0.85) 0%, rgba(16,16,32,0.85) 100%);
-    border-radius: 24px;
+    background: var(--card);
+    border-radius: 20px;
     overflow: hidden;
-    margin-bottom: 18px;
-    border: 1px solid rgba(255,255,255,0.08);
-    animation: cardEnter .5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-    position: relative;
-    backdrop-filter: blur(20px);
-    box-shadow:
-      0 10px 40px rgba(0,0,0,0.4),
-      inset 0 1px 0 rgba(255,255,255,0.05);
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    transition: transform .2s, border-color .2s;
+    animation: cardIn .35s ease both;
   }
-  @keyframes cardEnter {
-    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: none; }
   }
-  .giveaway::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(167,139,250,0.08), transparent 40%, transparent 60%, rgba(240,147,251,0.06));
-    pointer-events: none;
-    z-index: 1;
-  }
 
-  .giveaway-photo { width: 100%; height: 190px; object-fit: cover; display: block; position: relative; z-index: 1; }
-  .giveaway-photo-placeholder {
-    width: 100%; height: 190px;
-    background:
-      radial-gradient(circle at 30% 30%, rgba(167,139,250,0.4), transparent 60%),
-      radial-gradient(circle at 70% 70%, rgba(240,147,251,0.3), transparent 60%),
-      linear-gradient(135deg, #1a1a2e, #2a1a3e);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 76px;
+  .giveaway-photo-wrap {
     position: relative;
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1e1f3a, #2a1e3d);
   }
-  .giveaway-photo-placeholder::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30z' fill='none' stroke='rgba(255,255,255,0.03)' stroke-width='1'/%3E%3C/svg%3E");
-    opacity: 0.5;
+  .giveaway-photo {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
   }
-
+  .giveaway-photo-placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 72px;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(124,92,255,0.35), transparent 60%),
+      radial-gradient(circle at 70% 70%, rgba(255,92,157,0.25), transparent 60%),
+      linear-gradient(135deg, #1a1b30, #241a35);
+  }
   .giveaway-badge {
-    position: absolute; top: 14px; right: 14px;
-    background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(20px);
-    padding: 7px 14px; border-radius: 12px;
-    font-size: 11px; font-weight: 900;
-    text-transform: uppercase; letter-spacing: 1px;
-    z-index: 2;
-    display: flex; align-items: center; gap: 5px;
+    position: absolute;
+    top: 12px; right: 12px;
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
   }
   .giveaway-badge.active {
-    color: #4ade80;
-    border: 1px solid rgba(74,222,128,0.4);
-    box-shadow: 0 0 20px rgba(74,222,128,0.3);
+    background: rgba(46,230,142,0.15);
+    color: var(--success);
+    border: 1px solid rgba(46,230,142,0.4);
   }
   .giveaway-badge.active::before {
     content: '';
+    display: inline-block;
     width: 6px; height: 6px;
-    background: #4ade80;
+    background: var(--success);
     border-radius: 50%;
-    animation: pulseDot 1.5s ease-in-out infinite;
-    box-shadow: 0 0 8px #4ade80;
+    margin-right: 6px;
+    vertical-align: middle;
+    animation: pulseDot 1.5s infinite;
   }
   @keyframes pulseDot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(46,230,142,0.7); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(46,230,142,0); }
   }
   .giveaway-badge.finished {
-    color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.7);
     border: 1px solid rgba(255,255,255,0.15);
   }
 
-  .giveaway-body { padding: 18px; position: relative; z-index: 1; }
+  /* Overlay градиент на фото снизу */
+  .giveaway-photo-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: linear-gradient(180deg, transparent, rgba(21,24,39,0.9));
+    pointer-events: none;
+  }
+
+  .giveaway-body { padding: 16px; }
+
   .giveaway-title {
-    font-size: 19px; font-weight: 900;
-    margin-bottom: 8px; line-height: 1.3;
-    background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1.25;
+    margin-bottom: 8px;
     letter-spacing: -0.3px;
   }
   .giveaway-desc {
-    font-size: 13px; color: var(--hint); line-height: 1.5; margin-bottom: 14px;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .giveaway-prize {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: linear-gradient(135deg, rgba(251,191,36,0.18), rgba(245,158,11,0.12));
-    border: 1px solid rgba(251,191,36,0.4);
-    color: var(--gold);
-    padding: 8px 14px; border-radius: 12px;
-    font-size: 12px; font-weight: 800;
-    margin-bottom: 14px;
-    box-shadow: 0 0 20px rgba(251,191,36,0.15);
-  }
-  .giveaway-meta {
-    display: flex; gap: 14px; font-size: 12px;
-    color: var(--hint); margin-bottom: 16px; flex-wrap: wrap;
-    font-weight: 600;
-  }
-  .giveaway-meta span { display: flex; align-items: center; gap: 5px; }
-  .giveaway-meta span b { color: rgba(255,255,255,0.8); font-weight: 800; }
-
-  .giveaway-footer { display: flex; gap: 8px; align-items: center; }
-  .btn {
-    padding: 13px 18px; border: none; border-radius: 14px;
-    font-size: 14px; font-weight: 800; cursor: pointer;
-    font-family: inherit;
-    transition: transform .15s cubic-bezier(0.34, 1.56, 0.64, 1), opacity .2s, box-shadow .2s;
-    white-space: nowrap;
-    letter-spacing: 0.2px;
-  }
-  .btn:active { transform: scale(0.95); }
-  .btn-primary {
-    flex: 1;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    box-shadow: 0 8px 24px rgba(102,126,234,0.5);
-    position: relative;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .btn-primary::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transform: translateX(-100%);
-    transition: transform .5s;
+  .giveaway-prize {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    background: rgba(255,201,60,0.12);
+    border: 1px solid rgba(255,201,60,0.3);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 12px;
   }
-  .btn-primary:hover::before { transform: translateX(100%); }
+
+  .giveaway-meta {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--text2);
+    font-weight: 600;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .giveaway-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .giveaway-meta b { color: #fff; font-weight: 800; }
+
+  /* Кнопки */
+  .giveaway-footer {
+    display: flex;
+    gap: 8px;
+  }
+  .btn {
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform .15s, opacity .2s;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary {
+    flex: 1;
+    padding: 13px 18px;
+    background: linear-gradient(135deg, #7c5cff, #6647e0);
+    color: #fff;
+    font-size: 14px;
+    box-shadow: 0 6px 18px rgba(124,92,255,0.35);
+  }
   .btn-primary.joined {
-    background: linear-gradient(135deg, #10b981, #047857);
-    box-shadow: 0 8px 24px rgba(16,185,129,0.4);
+    background: linear-gradient(135deg, #2ee68e, #20b877);
+    box-shadow: 0 6px 18px rgba(46,230,142,0.3);
   }
   .btn-primary:disabled {
     background: rgba(255,255,255,0.08);
-    color: var(--hint); box-shadow: none; cursor: not-allowed;
+    color: var(--text3);
+    box-shadow: none;
+    cursor: not-allowed;
   }
-  .btn-small {
-    padding: 13px 15px; font-size: 13px;
-    background: rgba(255,255,255,0.07); color: var(--text);
-    border: 1px solid rgba(255,255,255,0.12);
-    backdrop-filter: blur(10px);
+  .btn-icon {
+    padding: 13px 15px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 46px;
+    font-size: 14px;
   }
-  .btn-small:hover { background: rgba(255,255,255,0.12); }
-  .btn-small.danger {
-    background: rgba(239,68,68,0.15); color: var(--danger);
-    border-color: rgba(239,68,68,0.35);
+  .btn-icon.danger {
+    background: rgba(255,77,109,0.1);
+    color: var(--danger);
+    border-color: rgba(255,77,109,0.3);
   }
-  .btn-small.danger:hover { background: rgba(239,68,68,0.25); }
+  .btn-full {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    background: rgba(255,77,109,0.1);
+    color: var(--danger);
+    border: 1px solid rgba(255,77,109,0.3);
+    font-size: 13px;
+  }
+  .btn-full:active { background: rgba(255,77,109,0.18); }
 
   /* Победитель */
-  .winner-block {
-    background: linear-gradient(135deg, rgba(251,191,36,0.15), rgba(245,158,11,0.08));
-    border: 1px solid rgba(251,191,36,0.4);
-    border-radius: 16px; padding: 14px 16px;
-    display: flex; align-items: center; gap: 12px;
-    position: relative;
+  .winner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(255,201,60,0.12), rgba(255,201,60,0.04));
+    border: 1px solid rgba(255,201,60,0.3);
+    border-radius: 14px;
+    margin-bottom: 4px;
+  }
+  .winner-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ffc93c, #f59e0b);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    box-shadow: 0 6px 16px rgba(255,201,60,0.35);
+  }
+  .winner-info { flex: 1; min-width: 0; }
+  .winner-label {
+    font-size: 10px;
+    color: rgba(255,201,60,0.75);
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    margin-bottom: 2px;
+  }
+  .winner-name {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--gold);
     overflow: hidden;
-    box-shadow: 0 0 30px rgba(251,191,36,0.15);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
-  .winner-block::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(251,191,36,0.15), transparent);
-    animation: winnerShine 3s ease-in-out infinite;
+  .winner.none {
+    background: rgba(255,255,255,0.04);
+    border-color: var(--border);
   }
-  @keyframes winnerShine {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+  .winner.none .winner-icon {
+    background: rgba(255,255,255,0.08);
+    box-shadow: none;
+    color: var(--text3);
   }
-  .winner-block .icon {
-    font-size: 28px;
-    filter: drop-shadow(0 0 12px rgba(251,191,36,0.8));
-    position: relative; z-index: 1;
-  }
-  .winner-block .info { flex: 1; position: relative; z-index: 1; }
-  .winner-block .label {
-    font-size: 10px; color: rgba(251,191,36,0.8);
-    text-transform: uppercase; font-weight: 900; letter-spacing: 1px;
-  }
-  .winner-block .name {
-    font-size: 15px; font-weight: 900; color: var(--gold);
-    margin-top: 2px;
-    text-shadow: 0 0 20px rgba(251,191,36,0.5);
-  }
+  .winner.none .winner-label { color: var(--text3); }
+  .winner.none .winner-name { color: var(--text2); font-weight: 700; }
 
   /* Форма */
   .form-card {
-    background: linear-gradient(135deg, rgba(26,26,46,0.85), rgba(16,16,32,0.85));
-    border-radius: 24px;
-    padding: 22px;
-    border: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    background: var(--card);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid var(--border);
   }
   .form-title {
-    font-size: 20px; font-weight: 900;
+    font-size: 20px;
+    font-weight: 900;
     margin-bottom: 20px;
-    display: flex; align-items: center; gap: 10px;
-    background: linear-gradient(135deg, #a78bfa, #f093fb);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: -0.4px;
   }
   .field { margin-bottom: 16px; }
   .field-label {
-    font-size: 11px; color: var(--hint);
-    text-transform: uppercase; letter-spacing: 1px;
-    font-weight: 900; margin-bottom: 8px; display: block;
+    display: block;
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 900;
+    margin-bottom: 8px;
   }
   .input, .textarea {
     width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1.5px solid rgba(255,255,255,0.1);
-    border-radius: 14px;
     padding: 14px 16px;
-    font-size: 15px; color: var(--text); font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: inherit;
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
     outline: none;
     transition: all .2s;
     -webkit-appearance: none;
@@ -382,247 +428,320 @@
   }
   .input:focus, .textarea:focus {
     border-color: var(--accent);
-    background: rgba(167,139,250,0.08);
-    box-shadow: 0 0 0 4px rgba(167,139,250,0.15);
+    background: rgba(124,92,255,0.08);
+    box-shadow: 0 0 0 4px rgba(124,92,255,0.12);
   }
-  .input::placeholder, .textarea::placeholder { color: rgba(255,255,255,0.3); }
-  .textarea { resize: vertical; min-height: 90px; }
+  .input::placeholder, .textarea::placeholder { color: var(--text3); }
+  .textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.5;
+  }
   .form-row { display: flex; gap: 10px; }
   .form-row .field { flex: 1; }
 
   .form-btn {
-    width: 100%; padding: 17px;
-    border: none; border-radius: 16px;
-    font-size: 16px; font-weight: 900;
-    cursor: pointer; font-family: inherit;
-    background: linear-gradient(135deg, #a78bfa 0%, #f093fb 100%);
+    width: 100%;
+    padding: 17px;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 900;
+    font-family: inherit;
+    cursor: pointer;
     color: #fff;
-    margin-top: 10px;
-    box-shadow: 0 10px 30px rgba(167,139,250,0.5);
-    transition: transform .15s, box-shadow .2s;
-    letter-spacing: 0.3px;
-    position: relative;
-    overflow: hidden;
-  }
-  .form-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transform: translateX(-100%);
-    animation: btnShine 2.5s ease-in-out infinite;
-  }
-  @keyframes btnShine {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
+    box-shadow: 0 10px 28px rgba(124,92,255,0.4);
+    margin-top: 8px;
+    letter-spacing: -0.2px;
+    transition: transform .15s, opacity .2s;
   }
   .form-btn:active { transform: scale(0.97); }
   .form-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* Фото дроп */
+  /* Фото */
   .photo-drop {
-    width: 100%; min-height: 150px;
-    background: rgba(255,255,255,0.04);
-    border: 2px dashed rgba(167,139,250,0.4);
-    border-radius: 16px;
-    display: flex; align-items: center; justify-content: center;
+    width: 100%;
+    min-height: 150px;
+    background: rgba(255,255,255,0.03);
+    border: 2px dashed rgba(124,92,255,0.35);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    overflow: hidden;
-    transition: all .25s;
-    position: relative;
     padding: 14px;
+    position: relative;
+    transition: all .2s;
+    overflow: hidden;
   }
-  .photo-drop:hover { border-color: var(--accent); background: rgba(167,139,250,0.06); }
-  .photo-drop:active { transform: scale(0.98); }
+  .photo-drop:hover {
+    border-color: var(--accent);
+    background: rgba(124,92,255,0.06);
+  }
+  .photo-drop:active { transform: scale(0.99); }
   .photo-preview {
     max-width: 100%;
     max-height: 220px;
-    border-radius: 12px;
+    border-radius: 10px;
     display: block;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
   }
   .photo-remove {
-    position: absolute; top: 10px; right: 10px;
-    width: 34px; height: 34px; border-radius: 50%;
-    background: linear-gradient(135deg, #ef4444, #b91c1c);
-    color: #fff; border: none;
-    font-size: 16px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 12px rgba(239,68,68,0.5);
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,77,109,0.95);
+    color: #fff;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
     z-index: 2;
   }
   .photo-placeholder-icon {
-    font-size: 42px; text-align: center; margin-bottom: 8px;
-    filter: drop-shadow(0 4px 12px rgba(167,139,250,0.5));
+    font-size: 38px;
+    text-align: center;
+    margin-bottom: 8px;
+    filter: opacity(0.7);
   }
-  .photo-placeholder-text { font-size: 13px; color: var(--hint); text-align: center; font-weight: 600; }
-  .photo-status { font-size: 12px; color: var(--hint); margin-top: 8px; text-align: center; font-weight: 700; }
+  .photo-placeholder-text {
+    font-size: 13px;
+    color: var(--text3);
+    text-align: center;
+    font-weight: 700;
+  }
+  .photo-status {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 8px;
+    text-align: center;
+    font-weight: 700;
+  }
   .photo-status.success { color: var(--success); }
   .photo-status.error { color: var(--danger); }
 
-  /* Пусто */
+  /* Пусто / загрузка */
   .empty {
     text-align: center;
-    padding: 70px 20px;
-    color: var(--hint);
-    animation: cardEnter .5s ease;
+    padding: 60px 20px;
+    color: var(--text3);
+    animation: cardIn .4s ease;
   }
   .empty-icon {
-    font-size: 80px; margin-bottom: 20px;
-    opacity: 0.4;
-    animation: floatIcon 4s ease-in-out infinite;
+    font-size: 64px;
+    margin-bottom: 14px;
+    opacity: 0.5;
   }
-  @keyframes floatIcon {
-    0%, 100% { transform: translateY(0) rotate(-5deg); }
-    50% { transform: translateY(-10px) rotate(5deg); }
+  .empty-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    color: var(--text);
+    letter-spacing: -0.2px;
   }
-  .empty-title { font-size: 17px; font-weight: 800; margin-bottom: 8px; color: var(--text); }
-  .empty-sub { font-size: 13px; line-height: 1.5; }
-
-  /* Загрузка */
-  .loading { text-align: center; padding: 50px; color: var(--hint); font-size: 14px; font-weight: 600; }
+  .empty-sub {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text3);
+  }
+  .loading {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text3);
+    font-size: 13px;
+    font-weight: 700;
+  }
   .spinner {
-    width: 40px; height: 40px;
-    border: 3px solid rgba(167,139,250,0.15);
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 14px;
+    border: 3px solid rgba(124,92,255,0.15);
     border-top-color: var(--accent);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 16px;
-    box-shadow: 0 0 20px rgba(167,139,250,0.3);
+    animation: spin 0.9s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Тост */
+  /* ====== ТОСТ — ИСПРАВЛЕННЫЙ ====== */
   .toast {
     position: fixed;
-    bottom: 110px; left: 50%;
-    transform: translateX(-50%) translateY(150px);
-    background: rgba(20,20,35,0.98);
-    backdrop-filter: blur(24px);
+    left: 50%;
+    bottom: 100px;
+    padding: 14px 22px;
+    border-radius: 14px;
+    background: #1a1f33;
     color: #fff;
-    padding: 15px 24px;
-    border-radius: 16px;
-    font-size: 14px; font-weight: 800;
-    z-index: 999;
-    transition: transform .4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    border: 1px solid rgba(255,255,255,0.15);
-    box-shadow: 0 15px 50px rgba(0,0,0,0.7);
-    max-width: 90%; text-align: center; pointer-events: none;
-    letter-spacing: 0.2px;
+    font-size: 14px;
+    font-weight: 800;
+    z-index: 9999;
+    max-width: 88%;
+    text-align: center;
+    pointer-events: none;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.12);
+    opacity: 0;
+    transform: translate(-50%, 20px);
+    transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    letter-spacing: -0.2px;
+    visibility: hidden;
   }
-  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    visibility: visible;
+  }
   .toast.success {
-    border-color: rgba(74,222,128,0.5);
-    background: linear-gradient(135deg, rgba(16,185,129,0.98), rgba(4,120,87,0.98));
-    box-shadow: 0 15px 50px rgba(16,185,129,0.4);
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: rgba(46,230,142,0.5);
+    box-shadow: 0 12px 40px rgba(16,185,129,0.4);
   }
   .toast.error {
-    border-color: rgba(239,68,68,0.5);
-    background: linear-gradient(135deg, rgba(239,68,68,0.98), rgba(185,28,28,0.98));
-    box-shadow: 0 15px 50px rgba(239,68,68,0.4);
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    border-color: rgba(255,77,109,0.5);
+    box-shadow: 0 12px 40px rgba(239,68,68,0.4);
   }
 
-  /* Админ FAB */
+  /* FAB */
   .admin-fab {
     position: fixed;
-    bottom: 26px; right: 22px;
-    width: 64px; height: 64px;
+    bottom: 24px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #a78bfa 0%, #f093fb 100%);
-    border: none; color: #fff;
-    font-size: 30px; cursor: pointer;
-    box-shadow:
-      0 12px 40px rgba(167,139,250,0.6),
-      0 0 0 0 rgba(167,139,250,0.7);
+    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
+    border: none;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 400;
+    cursor: pointer;
+    box-shadow: 0 12px 32px rgba(124,92,255,0.55);
     z-index: 100;
     display: none;
-    align-items: center; justify-content: center;
-    transition: transform .2s cubic-bezier(0.34, 1.56, 0.64, 1);
-    animation: fabPulse 2s ease-in-out infinite;
-  }
-  @keyframes fabPulse {
-    0%, 100% { box-shadow: 0 12px 40px rgba(167,139,250,0.6), 0 0 0 0 rgba(167,139,250,0.7); }
-    50% { box-shadow: 0 12px 40px rgba(167,139,250,0.8), 0 0 0 12px rgba(167,139,250,0); }
+    align-items: center;
+    justify-content: center;
+    transition: transform .15s;
+    padding-bottom: 3px;
   }
   .admin-fab:active { transform: scale(0.9); }
   .admin-fab.show { display: flex; }
 
   /* Модалка */
   .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.85);
-    backdrop-filter: blur(12px);
-    z-index: 500; display: none;
-    align-items: flex-end; justify-content: center;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 500;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
   }
-  .modal-overlay.show { display: flex; animation: fadeIn .3s; }
+  .modal-overlay.show {
+    display: flex;
+    animation: fadeIn .2s ease;
+  }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   .modal {
-    background: linear-gradient(180deg, #16162a 0%, #0d0d1a 100%);
-    width: 100%; max-width: 500px;
-    border-radius: 28px 28px 0 0;
-    max-height: 85vh; overflow-y: auto;
-    animation: slideUp .35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: #131624;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 24px 24px 0 0;
+    max-height: 82vh;
+    overflow-y: auto;
+    animation: slideUp .3s cubic-bezier(0.16, 1, 0.3, 1);
     padding-bottom: 24px;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-bottom: none;
+    border-top: 1px solid var(--border);
   }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: none; } }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: none; }
+  }
 
   .modal-header {
-    padding: 18px 22px;
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    position: sticky; top: 0;
-    background: rgba(22,22,42,0.95);
-    backdrop-filter: blur(20px);
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: #131624;
     z-index: 10;
   }
-  .modal-title { font-size: 18px; font-weight: 900; }
-  .modal-close {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: rgba(255,255,255,0.08);
-    border: none; color: var(--text);
-    font-size: 18px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .2s;
+  .modal-title {
+    font-size: 17px;
+    font-weight: 900;
+    letter-spacing: -0.3px;
   }
-  .modal-close:hover { background: rgba(255,255,255,0.15); }
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   .participant {
-    display: flex; align-items: center; gap: 14px;
-    padding: 14px 22px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    transition: background .2s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
   }
-  .participant:hover { background: rgba(255,255,255,0.03); }
   .participant-avatar {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 900; flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 900;
+    flex-shrink: 0;
+    color: #fff;
   }
   .participant-info { flex: 1; min-width: 0; }
   .participant-name {
-    font-size: 14px; font-weight: 800;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.2px;
   }
-  .participant-username { font-size: 12px; color: var(--hint); margin-top: 2px; }
-  .participant-date { font-size: 11px; color: var(--hint); font-weight: 700; }
+  .participant-username {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 2px;
+    font-weight: 600;
+  }
+  .participant-date {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 700;
+  }
 </style>
 </head>
 <body>
 
-<div class="bg-glow g1"></div>
-<div class="bg-glow g2"></div>
-<div class="bg-glow g3"></div>
-<div class="stars" id="stars"></div>
-
 <div class="topbar">
-  <div class="logo">🎁 Розыгрыши</div>
-  <div class="user-badge" id="userBadge">
+  <div class="logo"><span class="logo-dot"></span>Розыгрыши</div>
+  <div class="user-badge">
     <div class="avatar-mini" id="userAvatarMini">?</div>
     <span id="userNameMini">Гость</span>
   </div>
@@ -630,16 +749,16 @@
 
 <div class="main">
 
-  <div class="tabs" id="tabs">
+  <div class="tabs">
     <div class="tab active" data-tab="active">🔥 Активные</div>
-    <div class="tab" data-tab="finished">🏆 Завершённые</div>
+    <div class="tab" data-tab="finished">🏆 Итоги</div>
     <div class="tab" data-tab="create" id="tabCreate" style="display:none;">➕ Создать</div>
   </div>
 
   <div id="view-active">
     <div class="loading" id="loadingActive">
       <div class="spinner"></div>
-      Загрузка розыгрышей...
+      Загрузка...
     </div>
     <div id="listActive"></div>
   </div>
@@ -653,24 +772,24 @@
       <div class="form-title">🎁 Новый розыгрыш</div>
 
       <div class="field">
-        <label class="field-label">Название *</label>
-        <input class="input" id="fTitle" placeholder="Например: Розыгрыш Telegram Premium" maxlength="80">
+        <label class="field-label">Название</label>
+        <input class="input" id="fTitle" placeholder="Например: Telegram Premium" maxlength="80">
       </div>
 
       <div class="field">
         <label class="field-label">Приз</label>
-        <input class="input" id="fPrize" placeholder="Например: Premium на 3 месяца" maxlength="80">
+        <input class="input" id="fPrize" placeholder="Premium на 3 месяца" maxlength="80">
       </div>
 
       <div class="field">
         <label class="field-label">Описание</label>
-        <textarea class="textarea" id="fDesc" placeholder="Условия розыгрыша..." maxlength="500"></textarea>
+        <textarea class="textarea" id="fDesc" placeholder="Условия участия..." maxlength="500"></textarea>
       </div>
 
       <div class="field">
-        <label class="field-label">Фото</label>
+        <label class="field-label">Обложка</label>
         <input type="file" id="fPhotoFile" accept="image/*" style="display:none" onchange="onPhotoSelected(event)">
-        <div id="photoDrop" class="photo-drop" onclick="document.getElementById('fPhotoFile').click()">
+        <div class="photo-drop" onclick="document.getElementById('fPhotoFile').click()">
           <div id="photoPreviewWrap" style="display:none; position:relative;">
             <img id="photoPreview" class="photo-preview" alt="">
             <button type="button" class="photo-remove" onclick="event.stopPropagation(); removePhoto();">✕</button>
@@ -688,9 +807,9 @@
           <label class="field-label">Длительность</label>
           <input class="input" id="fHours" type="number" value="24" min="1" max="720">
         </div>
-        <div class="field" style="flex:0 0 130px;">
+        <div class="field" style="flex: 0 0 130px;">
           <label class="field-label">Ед.</label>
-          <select class="input" id="fUnit" style="padding:14px 12px;">
+          <select class="input" id="fUnit">
             <option value="hours">часов</option>
             <option value="minutes">минут</option>
             <option value="days">дней</option>
@@ -706,9 +825,9 @@
 
 </div>
 
-<button class="admin-fab" id="adminFab" onclick="openCreateTab()">➕</button>
+<button class="admin-fab" id="adminFab" onclick="openCreateTab()">+</button>
 
-<div class="modal-overlay" id="participantsModal">
+<div class="modal-overlay" id="participantsModal" onclick="if(event.target===this)closeParticipants()">
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">👥 Участники</div>
@@ -730,30 +849,11 @@ var ADMIN_ID = 8309824939;
 var tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
-try { tg.setHeaderColor('#07070f'); } catch(e) {}
-try { tg.setBackgroundColor('#07070f'); } catch(e) {}
+try { tg.setHeaderColor('#0b0d17'); } catch(e) {}
+try { tg.setBackgroundColor('#0b0d17'); } catch(e) {}
 
 var user = (tg.initDataUnsafe && tg.initDataUnsafe.user) || { id: 0, first_name: 'Гость' };
 var isAdmin = String(user.id) === String(ADMIN_ID);
-
-// ==========================================================
-// ЗВЁЗДЫ НА ФОНЕ
-// ==========================================================
-function initStars() {
-  var c = document.getElementById('stars');
-  for (var i = 0; i < 50; i++) {
-    var s = document.createElement('div');
-    s.className = 'star';
-    s.style.left = Math.random() * 100 + '%';
-    s.style.top = Math.random() * 100 + '%';
-    var size = Math.random() * 2 + 1;
-    s.style.width = size + 'px';
-    s.style.height = size + 'px';
-    s.style.animationDelay = (Math.random() * 3) + 's';
-    s.style.animationDuration = (2 + Math.random() * 3) + 's';
-    c.appendChild(s);
-  }
-}
 
 function initUserUI() {
   var initials = (user.first_name ? user.first_name[0] : '') + (user.last_name ? user.last_name[0] : '');
@@ -770,7 +870,6 @@ function initUserUI() {
 // ==========================================================
 var giveaways = [];
 var myJoins = [];
-// ⭐ Ключ localStorage уникален для каждого юзера — фикс бага с чужим участием
 var myJoinsKey = 'myJoins_' + (user.id || 0);
 try {
   var saved = localStorage.getItem(myJoinsKey);
@@ -789,9 +888,9 @@ function apiRequest(method, path, body) {
       if (xhr.readyState === 4) {
         if (xhr.status >= 200 && xhr.status < 300) {
           try { resolve(JSON.parse(xhr.responseText)); }
-          catch (e) { reject(new Error('Bad JSON: ' + xhr.responseText.slice(0, 100))); }
+          catch (e) { reject(new Error('Bad JSON')); }
         } else {
-          reject(new Error('HTTP ' + xhr.status + ': ' + xhr.responseText.slice(0, 100)));
+          reject(new Error('HTTP ' + xhr.status));
         }
       }
     };
@@ -799,9 +898,8 @@ function apiRequest(method, path, body) {
     xhr.send(body ? JSON.stringify(body) : null);
   });
 }
-
-function apiGet(path) { return apiRequest('GET', path); }
-function apiPost(path, body) { return apiRequest('POST', path, body); }
+function apiGet(p) { return apiRequest('GET', p); }
+function apiPost(p, b) { return apiRequest('POST', p, b); }
 
 // ==========================================================
 // ЗАГРУЗКА
@@ -809,8 +907,11 @@ function apiPost(path, body) { return apiRequest('POST', path, body); }
 function loadGiveaways() {
   apiGet('/api/giveaways')
     .then(function(data) { giveaways = data || []; renderAll(); })
-    .catch(function(e) { showToast('Ошибка загрузки: ' + e.message, 'error'); })
-    .finally(function() { document.getElementById('loadingActive').style.display = 'none'; });
+    .catch(function(e) { showToast('Ошибка: ' + e.message, 'error'); })
+    .finally(function() {
+      var l = document.getElementById('loadingActive');
+      if (l) l.style.display = 'none';
+    });
 }
 
 function renderAll() { renderActive(); renderFinished(); }
@@ -820,11 +921,11 @@ function renderActive() {
   var el = document.getElementById('listActive');
   if (active.length === 0) {
     el.innerHTML = '<div class="empty"><div class="empty-icon">🎈</div>' +
-      '<div class="empty-title">Пока нет активных розыгрышей</div>' +
-      '<div class="empty-sub">Заходи позже — админ скоро что-то запустит!</div></div>';
+      '<div class="empty-title">Нет активных розыгрышей</div>' +
+      '<div class="empty-sub">Заходи позже — скоро что-то будет</div></div>';
     return;
   }
-  el.innerHTML = active.map(function(g) { return renderGiveawayCard(g, 'active'); }).join('');
+  el.innerHTML = active.map(function(g) { return renderCard(g, 'active'); }).join('');
 }
 
 function renderFinished() {
@@ -832,20 +933,19 @@ function renderFinished() {
   var el = document.getElementById('listFinished');
   if (finished.length === 0) {
     el.innerHTML = '<div class="empty"><div class="empty-icon">🏆</div>' +
-      '<div class="empty-title">Завершённых пока нет</div>' +
-      '<div class="empty-sub">Когда розыгрыш закончится — появится здесь</div></div>';
+      '<div class="empty-title">Пока нет завершённых</div>' +
+      '<div class="empty-sub">Итоги розыгрышей появятся здесь</div></div>';
     return;
   }
-  el.innerHTML = finished.map(function(g) { return renderGiveawayCard(g, 'finished'); }).join('');
+  el.innerHTML = finished.map(function(g) { return renderCard(g, 'finished'); }).join('');
 }
 
-function renderGiveawayCard(g, mode) {
+function renderCard(g, mode) {
   var joined = myJoins.indexOf(g.id) !== -1;
-  var endsIn = formatTimeLeft(g.endsAt);
+
   var photoHtml;
   if (g.photoFileId) {
-    var photoSrc = API_URL + '/api/photo/' + encodeURIComponent(g.photoFileId);
-    photoHtml = '<img class="giveaway-photo" src="' + photoSrc + '" alt="">';
+    photoHtml = '<img class="giveaway-photo" src="' + API_URL + '/api/photo/' + encodeURIComponent(g.photoFileId) + '" alt="">';
   } else if (g.photoUrl) {
     photoHtml = '<img class="giveaway-photo" src="' + escapeHtml(g.photoUrl) + '" alt="">';
   } else {
@@ -853,74 +953,82 @@ function renderGiveawayCard(g, mode) {
   }
 
   var footer = '';
+
   if (mode === 'active') {
+    var btnJoined = joined ? ' joined' : '';
+    var btnText = joined ? '✓ Ты участвуешь' : '🎯 Участвовать';
     if (isAdmin) {
       footer = '<div class="giveaway-footer">' +
-        '<button class="btn btn-primary ' + (joined ? 'joined' : '') + '" onclick="toggleJoin(\'' + g.id + '\', ' + joined + ')">' +
-          (joined ? '✓ Участвуешь' : '🎯 Участвовать') + '</button>' +
-        '<button class="btn btn-small" onclick="openParticipants(\'' + g.id + '\')">👥 ' + (g.participantCount || 0) + '</button>' +
-        '<button class="btn btn-small danger" onclick="pickWinner(\'' + g.id + '\')" title="Выбрать победителя">🎲</button>' +
+        '<button class="btn btn-primary' + btnJoined + '" onclick="toggleJoin(\'' + g.id + '\',' + joined + ')">' + btnText + '</button>' +
+        '<button class="btn btn-icon" onclick="openParticipants(\'' + g.id + '\')">👥</button>' +
+        '<button class="btn btn-icon danger" onclick="pickWinner(\'' + g.id + '\')">🎲</button>' +
         '</div>';
     } else {
       footer = '<div class="giveaway-footer">' +
-        '<button class="btn btn-primary ' + (joined ? 'joined' : '') + '" onclick="toggleJoin(\'' + g.id + '\', ' + joined + ')">' +
-          (joined ? '✓ Участвуешь' : '🎯 Участвовать') + '</button>' +
-        '<button class="btn btn-small" onclick="openParticipants(\'' + g.id + '\')">👥 ' + (g.participantCount || 0) + '</button>' +
+        '<button class="btn btn-primary' + btnJoined + '" onclick="toggleJoin(\'' + g.id + '\',' + joined + ')">' + btnText + '</button>' +
+        '<button class="btn btn-icon" onclick="openParticipants(\'' + g.id + '\')">👥</button>' +
         '</div>';
     }
   } else {
-    // Завершённый
     if (g.winnerId) {
       var isMe = String(g.winnerId) === String(user.id);
-      footer = '<div class="winner-block"><div class="icon">' + (isMe ? '🏆' : '🎉') + '</div>' +
-        '<div class="info"><div class="label">' + (isMe ? 'ТЫ ПОБЕДИЛ!' : 'Победитель') + '</div>' +
-        '<div class="name">' + escapeHtml(g.winnerName || 'Участник') + '</div></div></div>';
+      footer = '<div class="winner">' +
+        '<div class="winner-icon">' + (isMe ? '🏆' : '🎉') + '</div>' +
+        '<div class="winner-info">' +
+          '<div class="winner-label">' + (isMe ? 'Ты победил!' : 'Победитель') + '</div>' +
+          '<div class="winner-name">' + escapeHtml(g.winnerName || 'Участник') + '</div>' +
+        '</div></div>';
     } else {
-      footer = '<div class="winner-block" style="background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.15);">' +
-        '<div class="icon" style="filter:none">😔</div>' +
-        '<div class="info"><div class="label" style="color:rgba(255,255,255,0.5)">Результат</div>' +
-        '<div class="name" style="color:rgba(255,255,255,0.6);text-shadow:none">Никто не участвовал</div></div></div>';
+      footer = '<div class="winner none">' +
+        '<div class="winner-icon">😔</div>' +
+        '<div class="winner-info">' +
+          '<div class="winner-label">Результат</div>' +
+          '<div class="winner-name">Никто не участвовал</div>' +
+        '</div></div>';
     }
-
-    // Админ может удалить завершённый розыгрыш
     if (isAdmin) {
-      footer += '<div style="margin-top:10px;">' +
-        '<button class="btn btn-small danger" style="width:100%" onclick="deleteGiveaway(\'' + g.id + '\', \'' + escapeJs(g.title) + '\')">' +
-        '🗑 Удалить розыгрыш</button></div>';
+      footer += '<button class="btn btn-full" onclick="deleteGiveaway(\'' + g.id + '\')">🗑 Удалить</button>';
     }
   }
 
   var metaHtml = '<div class="giveaway-meta">' +
-    '<span>⏰ ' + (mode === 'active' ? endsIn : 'Завершён') + '</span>' +
-    '<span>👥 <b>' + (g.participantCount || 0) + '</b> участников</span></div>';
+    '<span>⏰ ' + (mode === 'active' ? formatTimeLeft(g.endsAt) : 'Завершён') + '</span>' +
+    '<span>👥 <b>' + (g.participantCount || 0) + '</b></span>' +
+    '</div>';
 
-  return '<div class="giveaway"><div style="position:relative;">' + photoHtml +
-    '<div class="giveaway-badge ' + mode + '">' + (mode === 'active' ? 'Активен' : 'Завершён') + '</div></div>' +
+  return '<div class="giveaway">' +
+    '<div class="giveaway-photo-wrap">' +
+      photoHtml +
+      '<div class="giveaway-badge ' + mode + '">' + (mode === 'active' ? 'Активен' : 'Завершён') + '</div>' +
+    '</div>' +
     '<div class="giveaway-body">' +
       '<div class="giveaway-title">' + escapeHtml(g.title) + '</div>' +
       (g.description ? '<div class="giveaway-desc">' + escapeHtml(g.description) + '</div>' : '') +
       (g.prize ? '<div class="giveaway-prize">🏆 ' + escapeHtml(g.prize) + '</div>' : '') +
-      metaHtml + footer + '</div></div>';
+      metaHtml +
+      footer +
+    '</div>' +
+  '</div>';
 }
 
 // ==========================================================
 // УЧАСТИЕ
 // ==========================================================
 function toggleJoin(id, joined) {
-  if (joined) { showToast('Ты уже участвуешь 👌'); return; }
+  if (joined) { showToast('Ты уже участвуешь'); return; }
   apiPost('/api/join', {
-    giveawayId: id, userId: user.id,
+    giveawayId: id,
+    userId: user.id,
     firstName: user.first_name || '',
     lastName: user.last_name || '',
     username: user.username || '',
   }).then(function(res) {
     if (res.error) { showToast(res.error, 'error'); return; }
     myJoins.push(id);
-    // ⭐ сохраняем в ключ, уникальный для юзера
     try { localStorage.setItem(myJoinsKey, JSON.stringify(myJoins)); } catch(e) {}
-    showToast('🎉 Ты участвуешь!', 'success');
+    showToast('🎉 Участие принято!', 'success');
     loadGiveaways();
-  }).catch(function(e) { showToast('Ошибка: ' + e.message, 'error'); });
+  }).catch(function(e) { showToast('Ошибка', 'error'); });
 }
 
 // ==========================================================
@@ -933,7 +1041,8 @@ function onPhotoSelected(event) {
   var file = event.target.files[0];
   if (!file) return;
   if (file.size > 5 * 1024 * 1024) {
-    setPhotoStatus('Файл больше 5 МБ', 'error'); return;
+    setPhotoStatus('Файл больше 5 МБ', 'error');
+    return;
   }
   var reader = new FileReader();
   reader.onload = function(e) {
@@ -941,7 +1050,7 @@ function onPhotoSelected(event) {
     document.getElementById('photoPreview').src = base64;
     document.getElementById('photoPreviewWrap').style.display = 'block';
     document.getElementById('photoPlaceholder').style.display = 'none';
-    setPhotoStatus('⏳ Загружаю в Telegram...', '');
+    setPhotoStatus('⏳ Загрузка...');
     uploadPhoto(base64, file.type);
   };
   reader.readAsDataURL(file);
@@ -955,20 +1064,21 @@ function uploadPhoto(base64, contentType) {
       photoUrl = res.url || '';
       setPhotoStatus('✅ Фото загружено', 'success');
     })
-    .catch(function(e) { setPhotoStatus('Ошибка: ' + e.message, 'error'); });
+    .catch(function(e) { setPhotoStatus('Ошибка загрузки', 'error'); });
 }
 
 function removePhoto() {
-  photoFileId = ''; photoUrl = '';
+  photoFileId = '';
+  photoUrl = '';
   document.getElementById('photoPreviewWrap').style.display = 'none';
   document.getElementById('photoPlaceholder').style.display = 'block';
   document.getElementById('fPhotoFile').value = '';
-  setPhotoStatus('', '');
+  setPhotoStatus('');
 }
 
 function setPhotoStatus(text, type) {
   var el = document.getElementById('photoStatus');
-  el.textContent = text;
+  el.textContent = text || '';
   el.className = 'photo-status';
   if (type) el.classList.add(type);
 }
@@ -977,29 +1087,33 @@ function setPhotoStatus(text, type) {
 // СОЗДАНИЕ
 // ==========================================================
 function createGiveaway() {
-  if (!isAdmin) { showToast('Только админ может создавать', 'error'); return; }
+  if (!isAdmin) { showToast('Только админ', 'error'); return; }
   var title = document.getElementById('fTitle').value.trim();
   var desc = document.getElementById('fDesc').value.trim();
   var prize = document.getElementById('fPrize').value.trim();
   var hours = Number(document.getElementById('fHours').value) || 24;
   var unit = document.getElementById('fUnit').value;
-  if (!title) { showToast('Впиши название!', 'error'); return; }
+  if (!title) { showToast('Впиши название', 'error'); return; }
 
-  var durationMs = hours * 60 * 60 * 1000;
-  if (unit === 'minutes') durationMs = hours * 60 * 1000;
-  if (unit === 'days') durationMs = hours * 24 * 60 * 60 * 1000;
+  var durationMs = hours * 3600000;
+  if (unit === 'minutes') durationMs = hours * 60000;
+  if (unit === 'days') durationMs = hours * 86400000;
 
   var btn = document.getElementById('createBtn');
   btn.disabled = true;
   btn.textContent = '⏳ Создаём...';
 
   apiPost('/api/create', {
-    adminId: user.id, title: title, description: desc,
-    prize: prize, photoUrl: photoUrl, photoFileId: photoFileId,
+    adminId: user.id,
+    title: title,
+    description: desc,
+    prize: prize,
+    photoUrl: photoUrl,
+    photoFileId: photoFileId,
     endsAt: Date.now() + durationMs,
   }).then(function(res) {
     if (res.error) { showToast(res.error, 'error'); return; }
-    showToast('✨ Создано! Уведомление разослано', 'success');
+    showToast('✨ Розыгрыш создан!', 'success');
     document.getElementById('fTitle').value = '';
     document.getElementById('fDesc').value = '';
     document.getElementById('fPrize').value = '';
@@ -1019,29 +1133,29 @@ function createGiveaway() {
 // ==========================================================
 function pickWinner(id) {
   if (!isAdmin) return;
-  if (!confirm('Выбрать случайного победителя? Необратимо.')) return;
+  if (!confirm('Выбрать случайного победителя?')) return;
   apiPost('/api/pick-winner', { giveawayId: id, adminId: user.id })
     .then(function(res) {
       if (res.error) { showToast(res.error, 'error'); return; }
-      showToast('🏆 Победитель выбран! Уведомление разослано', 'success');
+      showToast('🏆 Победитель определён!', 'success');
       loadGiveaways();
     })
-    .catch(function(e) { showToast('Ошибка: ' + e.message, 'error'); });
+    .catch(function(e) { showToast('Ошибка', 'error'); });
 }
 
 // ==========================================================
-// УДАЛЕНИЕ РОЗЫГРЫША (админ)
+// УДАЛЕНИЕ
 // ==========================================================
-function deleteGiveaway(id, title) {
+function deleteGiveaway(id) {
   if (!isAdmin) return;
-  if (!confirm('Удалить розыгрыш «' + (title || '') + '»? Действие необратимо.')) return;
+  if (!confirm('Удалить розыгрыш?')) return;
   apiPost('/api/delete', { giveawayId: id, adminId: user.id })
     .then(function(res) {
       if (res.error) { showToast(res.error, 'error'); return; }
-      showToast('🗑 Розыгрыш удалён', 'success');
+      showToast('🗑 Удалено', 'success');
       loadGiveaways();
     })
-    .catch(function(e) { showToast('Ошибка: ' + e.message, 'error'); });
+    .catch(function(e) { showToast('Ошибка', 'error'); });
 }
 
 // ==========================================================
@@ -1052,20 +1166,22 @@ function openParticipants(id) {
     var parts = data.participants || [];
     var el = document.getElementById('participantsList');
     if (parts.length === 0) {
-      el.innerHTML = '<div class="empty" style="padding:40px 20px;"><div class="empty-icon">👥</div><div class="empty-title">Пока никто не участвует</div></div>';
+      el.innerHTML = '<div class="empty" style="padding:50px 20px;"><div class="empty-icon">👥</div><div class="empty-title">Пусто</div><div class="empty-sub">Ещё никто не участвует</div></div>';
     } else {
       el.innerHTML = parts.map(function(p) {
         var initials = (p.firstName ? p.firstName[0] : '') + (p.lastName ? p.lastName[0] : '');
         return '<div class="participant">' +
           '<div class="participant-avatar">' + escapeHtml((initials || '?').toUpperCase()) + '</div>' +
-          '<div class="participant-info"><div class="participant-name">' +
-          escapeHtml([p.firstName, p.lastName].filter(Boolean).join(' ') || 'Участник') + '</div>' +
-          (p.username ? '<div class="participant-username">@' + escapeHtml(p.username) + '</div>' : '') +
-          '</div><div class="participant-date">' + formatDate(p.joinedAt) + '</div></div>';
+          '<div class="participant-info">' +
+            '<div class="participant-name">' + escapeHtml([p.firstName, p.lastName].filter(Boolean).join(' ') || 'Участник') + '</div>' +
+            (p.username ? '<div class="participant-username">@' + escapeHtml(p.username) + '</div>' : '') +
+          '</div>' +
+          '<div class="participant-date">' + formatDate(p.joinedAt) + '</div>' +
+        '</div>';
       }).join('');
     }
     document.getElementById('participantsModal').classList.add('show');
-  }).catch(function(e) { showToast('Ошибка: ' + e.message, 'error'); });
+  }).catch(function(e) { showToast('Ошибка', 'error'); });
 }
 
 function closeParticipants() {
@@ -1101,13 +1217,9 @@ function escapeHtml(s) {
   });
 }
 
-function escapeJs(s) {
-  return String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, ' ');
-}
-
 function formatTimeLeft(endsAt) {
   var diff = endsAt - Date.now();
-  if (diff <= 0) return 'Завершён';
+  if (diff <= 0) return 'Истёк';
   var d = Math.floor(diff / 86400000);
   var h = Math.floor((diff % 86400000) / 3600000);
   var m = Math.floor((diff % 3600000) / 60000);
@@ -1117,20 +1229,36 @@ function formatTimeLeft(endsAt) {
 }
 
 function formatDate(ts) {
-  var d = new Date(ts);
-  return d.toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit' });
+  return new Date(ts).toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit' });
 }
 
+// ==========================================================
+// ТОСТ — ИСПРАВЛЕННЫЙ
+// ==========================================================
+var toastTimer = null;
 function showToast(text, type) {
   var t = document.getElementById('toast');
-  t.textContent = text;
+
+  // сброс
+  if (toastTimer) clearTimeout(toastTimer);
+  t.classList.remove('show');
   t.className = 'toast';
-  if (type) t.classList.add(type);
-  t.classList.add('show');
-  clearTimeout(t._tm);
-  t._tm = setTimeout(function() { t.classList.remove('show'); }, 2500);
+
+  // небольшая задержка чтобы анимация сработала заново
+  setTimeout(function() {
+    t.textContent = text;
+    if (type) t.classList.add(type);
+    // force reflow
+    void t.offsetWidth;
+    t.classList.add('show');
+
+    toastTimer = setTimeout(function() {
+      t.classList.remove('show');
+    }, 2200);
+  }, 20);
 }
 
+// Автообновление таймеров
 setInterval(function() {
   var hasActive = giveaways.some(function(g) { return g.status === 'active'; });
   if (hasActive) renderActive();
@@ -1139,7 +1267,6 @@ setInterval(function() {
 // ==========================================================
 // СТАРТ
 // ==========================================================
-initStars();
 initUserUI();
 loadGiveaways();
 </script>

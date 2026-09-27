@@ -1,335 +1,681 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Профиль</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cosmic Clicker</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'Segoe UI', Roboto, sans-serif;
-      background: var(--tg-theme-bg-color, #ffffff);
-      color: var(--tg-theme-text-color, #000000);
-      min-height: 100vh;
-      padding-bottom: 30px;
-      transition: background .3s, color .3s;
-    }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a1a;
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
 
-    /* Шапка с градиентом */
-    .header {
-      position: relative;
-      padding: 40px 20px 80px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 0 0 30px 30px;
-      text-align: center;
-      overflow: hidden;
-    }
-    .header::before {
-      content: '';
-      position: absolute;
-      top: -50%; right: -20%;
-      width: 300px; height: 300px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 50%;
-    }
-    .header::after {
-      content: '';
-      position: absolute;
-      bottom: -40%; left: -20%;
-      width: 250px; height: 250px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 50%;
-    }
+  /* === Космический фон === */
+  #stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .bg-glow {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  .glow-1 { width:400px; height:400px; background:#667eea; top:-150px; right:-150px; }
+  .glow-2 { width:300px; height:300px; background:#764ba2; bottom:-100px; left:-100px; }
+  .glow-3 { width:250px; height:250px; background:#f093fb; top:40%; left:-100px; opacity:0.3; }
 
-    /* Аватарка */
-    .avatar-wrap {
-      position: relative;
-      display: inline-block;
-      z-index: 1;
-    }
-    .avatar {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      border: 4px solid rgba(255,255,255,0.9);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      object-fit: cover;
-      background: #ddd;
-    }
-    .avatar-fallback {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      border: 4px solid rgba(255,255,255,0.9);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 42px;
-      font-weight: 700;
-      color: #fff;
-    }
-    .premium-badge {
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, #ffd700, #ff8c00);
-      border-radius: 50%;
-      border: 3px solid #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      box-shadow: 0 4px 12px rgba(255,140,0,0.4);
-    }
+  /* === Шапка === */
+  .topbar {
+    position: relative;
+    z-index: 2;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .level-badge {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .level-badge span { color: #a78bfa; }
 
-    /* Имя и юзернейм */
-    .name {
-      margin-top: 16px;
-      font-size: 24px;
-      font-weight: 700;
-      color: #fff;
-      z-index: 1;
-      position: relative;
-    }
-    .username {
-      margin-top: 4px;
-      font-size: 15px;
-      color: rgba(255,255,255,0.85);
-      z-index: 1;
-      position: relative;
-    }
+  .save-indicator {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    transition: color .3s;
+  }
+  .save-indicator.saved { color: #4ade80; }
 
-    /* Карточки со статистикой */
-    .stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 0 16px;
-      margin-top: -50px;
-      z-index: 2;
-      position: relative;
-    }
-    .stat-card {
-      background: var(--tg-theme-secondary-bg-color, #f5f5f5);
-      border-radius: 18px;
-      padding: 18px 16px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-    }
-    .stat-label {
-      font-size: 12px;
-      color: var(--tg-theme-hint-color, #999);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-    }
-    .stat-value {
-      margin-top: 6px;
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--tg-theme-text-color, #000);
-      word-break: break-all;
-    }
+  /* === Основной контент === */
+  .main {
+    position: relative;
+    z-index: 2;
+    padding: 0 20px 100px;
+  }
 
-    /* Основная информация */
-    .info-list {
-      margin: 20px 16px 0;
-      background: var(--tg-theme-secondary-bg-color, #f5f5f5);
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-    }
-    .info-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 18px;
-      border-bottom: 1px solid var(--tg-theme-section-separator-color, rgba(0,0,0,0.06));
-    }
-    .info-item:last-child { border-bottom: none; }
-    .info-key {
-      font-size: 15px;
-      color: var(--tg-theme-hint-color, #999);
-    }
-    .info-val {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--tg-theme-text-color, #000);
-      text-align: right;
-      max-width: 60%;
-      word-break: break-all;
-    }
+  /* Счётчик */
+  .counter-block {
+    text-align: center;
+    margin: 10px 0 30px;
+  }
+  .counter-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .counter {
+    font-size: 52px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #a78bfa, #f093fb, #f5576c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    transition: transform .15s;
+  }
+  .counter.bump { transform: scale(1.08); }
+  .per-second {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #4ade80;
+    font-weight: 600;
+  }
 
-    /* Кнопки */
-    .actions {
-      padding: 20px 16px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .btn {
-      padding: 16px;
-      border: none;
-      border-radius: 16px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform .1s, opacity .2s;
-      font-family: inherit;
-    }
-    .btn:active { transform: scale(0.97); }
-    .btn-primary {
-      background: var(--tg-theme-button-color, #2481cc);
-      color: var(--tg-theme-button-text-color, #fff);
-    }
-    .btn-secondary {
-      background: var(--tg-theme-secondary-bg-color, #f5f5f5);
-      color: var(--tg-theme-text-color, #000);
-    }
+  /* Прогресс-бар уровня */
+  .xp-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 16px auto 0;
+    max-width: 260px;
+  }
+  .xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #a78bfa);
+    width: 0%;
+    transition: width .4s ease;
+    border-radius: 6px;
+  }
+  .xp-text {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 6px;
+    text-align: center;
+  }
 
-    /* Футер */
-    .footer {
-      text-align: center;
-      padding: 24px 16px 0;
-      font-size: 12px;
-      color: var(--tg-theme-hint-color, #999);
-    }
-  </style>
+  /* === Кнопка тапа === */
+  .tap-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0 40px;
+    position: relative;
+    height: 260px;
+  }
+  .tap-btn {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #a78bfa, #6366f1 60%, #4c1d95);
+    border: none;
+    color: #fff;
+    font-size: 64px;
+    cursor: pointer;
+    position: relative;
+    box-shadow:
+      0 0 60px rgba(167,139,250,0.5),
+      0 0 120px rgba(99,102,241,0.3),
+      inset 0 -10px 30px rgba(0,0,0,0.3);
+    transition: transform .08s;
+    z-index: 2;
+  }
+  .tap-btn:active { transform: scale(0.92); }
+  .tap-btn::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 2px solid rgba(167,139,250,0.4);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.08); opacity: 0.2; }
+  }
+
+  /* Частицы при тапе */
+  .particle {
+    position: absolute;
+    pointer-events: none;
+    font-size: 20px;
+    font-weight: 800;
+    color: #fbbf24;
+    animation: floatUp 1s ease-out forwards;
+    z-index: 3;
+  }
+  @keyframes floatUp {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+    100% { transform: translate(-50%, -150px) scale(1.3); opacity: 0; }
+  }
+
+  /* === Магазин === */
+  .section-title {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+
+  .shop {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .shop-item {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .shop-item:active { transform: scale(0.98); }
+  .shop-item.affordable {
+    border-color: rgba(74,222,128,0.5);
+    background: rgba(74,222,128,0.08);
+  }
+  .shop-item.affordable::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(74,222,128,0.15), transparent);
+    animation: shimmer 2s infinite;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .shop-icon {
+    font-size: 28px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+  .shop-info { flex: 1; min-width: 0; }
+  .shop-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .shop-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+  .shop-price {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .shop-price-val {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fbbf24;
+  }
+  .shop-level {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+  }
+
+  /* === Кнопки внизу === */
+  .bottom-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .btn {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform .1s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(102,126,234,0.4);
+  }
+  .btn-secondary {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  /* === Тост === */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(74,222,128,0.95);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 999;
+    transition: transform .3s;
+    pointer-events: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: rgba(239,68,68,0.95); }
+</style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="avatar-wrap">
-      <img id="avatar" class="avatar" style="display:none" alt="Аватар">
-      <div id="avatarFallback" class="avatar-fallback">👤</div>
-      <div id="premiumBadge" class="premium-badge" style="display:none">⭐</div>
+<canvas id="stars"></canvas>
+<div class="bg-glow glow-1"></div>
+<div class="bg-glow glow-2"></div>
+<div class="bg-glow glow-3"></div>
+
+<div class="topbar">
+  <div class="level-badge">УРОВЕНЬ <span id="level">1</span></div>
+  <div class="save-indicator" id="saveIndicator">💾 сохранено</div>
+</div>
+
+<div class="main">
+
+  <div class="counter-block">
+    <div class="counter-label">Энергия</div>
+    <div class="counter" id="counter">0</div>
+    <div class="per-second" id="perSecond">+0 / сек</div>
+
+    <div class="xp-bar">
+      <div class="xp-fill" id="xpFill"></div>
     </div>
-    <div id="name" class="name">Загрузка...</div>
-    <div id="username" class="username">@...</div>
+    <div class="xp-text" id="xpText">0 / 100 XP</div>
   </div>
 
-  <div class="stats">
-    <div class="stat-card">
-      <div class="stat-label">Telegram ID</div>
-      <div class="stat-value" id="userId">—</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Язык</div>
-      <div class="stat-value" id="langCode">—</div>
-    </div>
+  <div class="tap-area" id="tapArea">
+    <button class="tap-btn" id="tapBtn">⚡</button>
   </div>
 
-  <div class="info-list">
-    <div class="info-item">
-      <span class="info-key">Имя</span>
-      <span class="info-val" id="firstName">—</span>
-    </div>
-    <div class="info-item">
-      <span class="info-key">Фамилия</span>
-      <span class="info-val" id="lastName">—</span>
-    </div>
-    <div class="info-item">
-      <span class="info-key">Премиум</span>
-      <span class="info-val" id="premiumText">Нет</span>
-    </div>
-    <div class="info-item">
-      <span class="info-key">Бот</span>
-      <span class="info-val" id="isBot">Нет</span>
-    </div>
+  <div class="section-title">🏪 Магазин апгрейдов</div>
+  <div class="shop" id="shop"></div>
+
+  <div class="bottom-actions">
+    <button class="btn btn-secondary" onclick="resetGame()">🔄 Сброс</button>
+    <button class="btn btn-primary" onclick="sendToBot()">📩 Боту</button>
   </div>
 
-  <div class="actions">
-    <button class="btn btn-primary" onclick="sendToBot()">
-      📩 Отправить данные боту
-    </button>
-    <button class="btn btn-secondary" onclick="tg.close()">
-      Закрыть
-    </button>
-  </div>
+</div>
 
-  <div class="footer">
-    Mini App • <span id="year"></span>
-  </div>
+<div class="toast" id="toast"></div>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+<script>
+// ============================================
+// Telegram
+// ============================================
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
+tg.setHeaderColor('#0a0a1a');
+tg.setBackgroundColor('#0a0a1a');
 
-    // Устанавливаем цвет шапки Telegram под наш градиент
-    tg.setHeaderColor('#667eea');
-    tg.setBackgroundColor(tg.themeParams.bg_color || '#ffffff');
+// ============================================
+// Состояние игры
+// ============================================
+const DEFAULT_STATE = {
+  energy: 0,
+  totalEarned: 0,
+  level: 1,
+  xp: 0,
+  clickPower: 1,
+  perSecond: 0,
+  upgrades: {
+    click: 0,      // +1 к клику
+    auto: 0,       // +1 в сек
+    multiplier: 0, // множитель
+  }
+};
 
-    const user = tg.initDataUnsafe?.user;
+let state = loadState();
 
-    function fillProfile(u) {
-      if (!u) {
-        document.getElementById('name').textContent = 'Гость';
-        document.getElementById('username').textContent = 'Данные недоступны';
-        return;
-      }
+// ============================================
+// Апгрейды
+// ============================================
+const UPGRADES = [
+  {
+    key: 'click',
+    icon: '👆',
+    name: 'Сила тапа',
+    desc: '+1 к клику',
+    basePrice: 15,
+    priceMult: 1.5,
+    effect: () => { state.clickPower += 1; }
+  },
+  {
+    key: 'auto',
+    icon: '🤖',
+    name: 'Дрон',
+    desc: '+1 энергии в секунду',
+    basePrice: 50,
+    priceMult: 1.6,
+    effect: () => { state.perSecond += 1; }
+  },
+  {
+    key: 'multiplier',
+    icon: '✨',
+    name: 'Множитель',
+    desc: '×1.5 ко всему доходу',
+    basePrice: 200,
+    priceMult: 2.2,
+    effect: () => { state.multiplier = (state.multiplier || 1) * 1.5; }
+  },
+];
 
-      // Имя
-      const fullName = [u.first_name, u.last_name].filter(Boolean).join(' ') || 'Без имени';
-      document.getElementById('name').textContent = fullName;
+function getPrice(upg) {
+  const lvl = state.upgrades[upg.key];
+  return Math.floor(upg.basePrice * Math.pow(upg.priceMult, lvl));
+}
 
-      // Юзернейм
-      document.getElementById('username').textContent = u.username ? '@' + u.username : '— без юзернейма';
+function getTotalClickPower() {
+  return state.clickPower * (state.multiplier || 1);
+}
+function getTotalPerSecond() {
+  return state.perSecond * (state.multiplier || 1);
+}
 
-      // ID
-      document.getElementById('userId').textContent = u.id;
+// ============================================
+// XP и уровни
+// ============================================
+function xpForLevel(lvl) {
+  return Math.floor(100 * Math.pow(1.5, lvl - 1));
+}
 
-      // Язык
-      document.getElementById('langCode').textContent = (u.language_code || '—').toUpperCase();
+function addXp(amount) {
+  state.xp += amount;
+  let leveledUp = false;
+  while (state.xp >= xpForLevel(state.level)) {
+    state.xp -= xpForLevel(state.level);
+    state.level += 1;
+    leveledUp = true;
+  }
+  if (leveledUp) showToast(`🎉 Уровень ${state.level}!`);
+}
 
-      // Имя / фамилия отдельно
-      document.getElementById('firstName').textContent = u.first_name || '—';
-      document.getElementById('lastName').textContent = u.last_name || '—';
+// ============================================
+// Сохранение
+// ============================================
+function saveState() {
+  try {
+    localStorage.setItem('cosmic_clicker_v1', JSON.stringify(state));
+    const ind = document.getElementById('saveIndicator');
+    ind.textContent = '✅ сохранено';
+    ind.classList.add('saved');
+    setTimeout(() => { ind.textContent = '💾 сохранено'; ind.classList.remove('saved'); }, 800);
+  } catch (e) {}
+}
 
-      // Премиум
-      if (u.is_premium) {
-        document.getElementById('premiumText').textContent = 'Да ✨';
-        document.getElementById('premiumBadge').style.display = 'flex';
-      } else {
-        document.getElementById('premiumText').textContent = 'Нет';
-      }
+function loadState() {
+  try {
+    const raw = localStorage.getItem('cosmic_clicker_v1');
+    if (raw) return { ...DEFAULT_STATE, ...JSON.parse(raw), upgrades: { ...DEFAULT_STATE.upgrades, ...(JSON.parse(raw).upgrades || {}) } };
+  } catch (e) {}
+  return { ...DEFAULT_STATE, upgrades: { ...DEFAULT_STATE.upgrades } };
+}
 
-      // Бот
-      document.getElementById('isBot').textContent = u.is_bot ? 'Да' : 'Нет';
+// ============================================
+// Рендер
+// ============================================
+function formatNumber(n) {
+  if (n < 1000) return Math.floor(n).toString();
+  if (n < 1e6) return (n/1000).toFixed(1) + 'K';
+  if (n < 1e9) return (n/1e6).toFixed(2) + 'M';
+  return (n/1e9).toFixed(2) + 'B';
+}
 
-      // Аватар — Telegram не отдаёт URL аватарки напрямую, поэтому фолбэк:
-      // показываем инициалы
-      const initials = (u.first_name?.[0] || '') + (u.last_name?.[0] || '');
-      const fallback = document.getElementById('avatarFallback');
-      if (initials) {
-        fallback.textContent = initials.toUpperCase();
-      } else {
-        fallback.textContent = '👤';
-      }
-    }
+function render() {
+  document.getElementById('counter').textContent = formatNumber(state.energy);
+  document.getElementById('perSecond').textContent = `+${formatNumber(getTotalPerSecond())} / сек`;
+  document.getElementById('level').textContent = state.level;
 
-    function sendToBot() {
-      const u = tg.initDataUnsafe?.user || {};
-      const data = {
-        action: 'profile',
-        id: u.id,
-        first_name: u.first_name,
-        last_name: u.last_name,
-        username: u.username,
-        language_code: u.language_code,
-        is_premium: !!u.is_premium,
-      };
-      tg.sendData(JSON.stringify(data));
-      tg.close();
-    }
+  const need = xpForLevel(state.level);
+  const pct = Math.min(100, (state.xp / need) * 100);
+  document.getElementById('xpFill').style.width = pct + '%';
+  document.getElementById('xpText').textContent = `${Math.floor(state.xp)} / ${need} XP`;
 
-    document.getElementById('year').textContent = new Date().getFullYear();
-    fillProfile(user);
-  </script>
+  // Магазин
+  const shopEl = document.getElementById('shop');
+  shopEl.innerHTML = UPGRADES.map(upg => {
+    const price = getPrice(upg);
+    const lvl = state.upgrades[upg.key];
+    const canBuy = state.energy >= price;
+    return `
+      <div class="shop-item ${canBuy ? 'affordable' : ''}" onclick="buyUpgrade('${upg.key}')">
+        <div class="shop-icon">${upg.icon}</div>
+        <div class="shop-info">
+          <div class="shop-name">${upg.name}</div>
+          <div class="shop-desc">${upg.desc}</div>
+        </div>
+        <div class="shop-price">
+          <div class="shop-price-val">⚡ ${formatNumber(price)}</div>
+          <div class="shop-level">ур. ${lvl}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================
+// Действия
+// ============================================
+function tap(e) {
+  const gain = getTotalClickPower();
+  state.energy += gain;
+  state.totalEarned += gain;
+  addXp(1);
+
+  // Визуальный бамп счётчика
+  const c = document.getElementById('counter');
+  c.classList.add('bump');
+  setTimeout(() => c.classList.remove('bump'), 150);
+
+  // Частица
+  spawnParticle(e, gain);
+
+  render();
+}
+
+function spawnParticle(e, gain) {
+  const area = document.getElementById('tapArea');
+  const rect = area.getBoundingClientRect();
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.textContent = '+' + formatNumber(gain);
+
+  let x, y;
+  if (e && e.touches) {
+    x = e.touches[0].clientX - rect.left;
+    y = e.touches[0].clientY - rect.top;
+  } else if (e && e.clientX) {
+    x = e.clientX - rect.left;
+    y = e.clientY - rect.top;
+  } else {
+    x = rect.width / 2;
+    y = rect.height / 2;
+  }
+
+  p.style.left = x + 'px';
+  p.style.top = y + 'px';
+  area.appendChild(p);
+  setTimeout(() => p.remove(), 1000);
+}
+
+function buyUpgrade(key) {
+  const upg = UPGRADES.find(u => u.key === key);
+  if (!upg) return;
+  const price = getPrice(upg);
+  if (state.energy < price) {
+    showToast('Недостаточно энергии 💸', true);
+    return;
+  }
+  state.energy -= price;
+  state.upgrades[key] += 1;
+  upg.effect();
+  saveState();
+  render();
+  showToast(`${upg.icon} ${upg.name} куплен!`);
+}
+
+function resetGame() {
+  if (!confirm('Сбросить весь прогресс?')) return;
+  state = { ...DEFAULT_STATE, upgrades: { ...DEFAULT_STATE.upgrades } };
+  saveState();
+  render();
+  showToast('Прогресс сброшен 🔄');
+}
+
+// ============================================
+// Отправка боту
+// ============================================
+function sendToBot() {
+  const data = {
+    action: 'game_result',
+    energy: Math.floor(state.energy),
+    totalEarned: Math.floor(state.totalEarned),
+    level: state.level,
+    clickPower: getTotalClickPower(),
+    perSecond: getTotalPerSecond(),
+    upgrades: state.upgrades,
+  };
+  tg.sendData(JSON.stringify(data));
+  tg.close();
+}
+
+// ============================================
+// Тост
+// ============================================
+function showToast(text, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.toggle('error', isError);
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ============================================
+// Авто-доход (каждый тик)
+// ============================================
+setInterval(() => {
+  const gain = getTotalPerSecond() / 10; // 10 тиков в сек
+  if (gain > 0) {
+    state.energy += gain;
+    state.totalEarned += gain;
+    addXp(0.1);
+    render();
+  }
+}, 100);
+
+// Автосохранение
+setInterval(saveState, 5000);
+window.addEventListener('beforeunload', saveState);
+
+// ============================================
+// Тап-события
+// ============================================
+const tapBtn = document.getElementById('tapBtn');
+tapBtn.addEventListener('click', tap);
+
+// ============================================
+// Космический фон со звёздами
+// ============================================
+function initStars() {
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let w, h, stars;
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    stars = Array.from({ length: 80 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: Math.random() * 1.5 + 0.3,
+      alpha: Math.random() * 0.7 + 0.3,
+      speed: Math.random() * 0.15 + 0.05,
+      twinkle: Math.random() * Math.PI * 2,
+    }));
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    stars.forEach(s => {
+      s.twinkle += 0.02;
+      const a = s.alpha * (0.6 + 0.4 * Math.sin(s.twinkle));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${a})`;
+      ctx.fill();
+      s.y += s.speed;
+      if (s.y > h) { s.y = 0; s.x = Math.random() * w; }
+    });
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+}
+
+// ============================================
+// Старт
+// ============================================
+initStars();
+render();
+showToast('Добро пожаловать! 👋');
+</script>
 </body>
 </html>

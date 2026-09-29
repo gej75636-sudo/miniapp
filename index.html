@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Розыгрыши</title>
+<title>Квиз-Рулетка</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
   :root {
     --bg: #0b0d17;
     --card: #151827;
@@ -15,126 +14,108 @@
     --accent: #7c5cff;
     --accent2: #ff5c9d;
     --gold: #ffc93c;
-    --text: #ffffff;
+    --text: #fff;
     --text2: rgba(255,255,255,0.65);
     --text3: rgba(255,255,255,0.4);
     --success: #2ee68e;
     --danger: #ff4d6d;
   }
-
   html, body { overscroll-behavior-y: none; }
-
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 100px;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; padding-bottom: 30px;
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-    position: relative;
-    font-weight: 500;
+    overflow-x: hidden; position: relative;
   }
-
   body::before {
-    content: '';
-    position: fixed;
-    top: -200px; right: -100px;
+    content: ''; position: fixed; top: -200px; right: -100px;
     width: 500px; height: 500px;
     background: radial-gradient(circle, rgba(124,92,255,0.25) 0%, transparent 65%);
-    pointer-events: none;
-    z-index: 0;
-    filter: blur(60px);
+    pointer-events: none; z-index: 0; filter: blur(60px);
   }
   body::after {
-    content: '';
-    position: fixed;
-    bottom: -200px; left: -100px;
+    content: ''; position: fixed; bottom: -200px; left: -100px;
     width: 450px; height: 450px;
     background: radial-gradient(circle, rgba(255,92,157,0.18) 0%, transparent 65%);
-    pointer-events: none;
-    z-index: 0;
-    filter: blur(60px);
+    pointer-events: none; z-index: 0; filter: blur(60px);
   }
 
-  /* Топбар */
+  /* Topbar */
   .topbar {
-    position: sticky;
-    top: 0;
+    position: sticky; top: 0;
     padding: 14px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex; justify-content: space-between; align-items: center;
     z-index: 50;
     background: rgba(11,13,23,0.75);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
   }
   .logo {
-    font-size: 19px;
-    font-weight: 900;
-    letter-spacing: -0.4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 18px; font-weight: 900; letter-spacing: -0.4px;
+    display: flex; align-items: center; gap: 8px;
   }
   .logo-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
+    width: 10px; height: 10px; border-radius: 50%;
     background: linear-gradient(135deg, #7c5cff, #ff5c9d);
     box-shadow: 0 0 12px rgba(124,92,255,0.7);
-  }
-  .user-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 12px 5px 5px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    font-size: 12px;
-    font-weight: 700;
-    max-width: 180px;
-  }
-  .user-badge span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .avatar-mini {
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 900;
-    flex-shrink: 0;
-    color: #fff;
   }
 
   .main { position: relative; z-index: 2; padding: 16px; }
 
-  /* Табы */
-  .tabs {
-    display: flex;
-    gap: 6px;
+  /* Balance card */
+  .balance-card {
+    background: linear-gradient(135deg, rgba(124,92,255,0.15), rgba(255,92,157,0.1));
+    border: 1px solid rgba(124,92,255,0.3);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .balance-left { display: flex; align-items: center; gap: 12px; }
+  .balance-icon { font-size: 40px; }
+  .balance-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
+  .balance-value { font-size: 32px; font-weight: 900; letter-spacing: -1px; line-height: 1; margin-top: 2px; }
+  .balance-value .star { color: var(--gold); }
+
+  /* Energy bar */
+  .energy-card {
     background: var(--card);
-    padding: 5px;
+    border: 1px solid var(--border);
     border-radius: 16px;
-    margin-bottom: 20px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+  }
+  .energy-top {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px; font-weight: 800;
+  }
+  .energy-top .label { color: var(--text2); display: flex; align-items: center; gap: 6px; }
+  .energy-top .val { color: var(--gold); }
+  .energy-bar {
+    height: 8px; background: rgba(255,255,255,0.08);
+    border-radius: 8px; overflow: hidden;
+  }
+  .energy-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ffc93c, #ff5c9d);
+    border-radius: 8px;
+    transition: width .3s;
+    box-shadow: 0 0 12px rgba(255,201,60,0.5);
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex; gap: 6px;
+    background: var(--card); padding: 5px;
+    border-radius: 16px; margin-bottom: 20px;
     border: 1px solid var(--border);
   }
   .tab {
-    flex: 1;
-    text-align: center;
-    padding: 10px 8px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--text3);
-    cursor: pointer;
-    transition: all .2s;
-    letter-spacing: -0.2px;
+    flex: 1; text-align: center; padding: 10px 8px;
+    border-radius: 12px; font-size: 12px; font-weight: 800;
+    color: var(--text3); cursor: pointer; transition: all .2s;
   }
   .tab.active {
     background: linear-gradient(135deg, #7c5cff, #6647e0);
@@ -142,756 +123,400 @@
     box-shadow: 0 6px 16px rgba(124,92,255,0.35);
   }
 
-  /* Карточка */
-  .giveaway {
+  /* Big spin button */
+  .spin-wrap {
+    text-align: center;
+    padding: 30px 0;
+  }
+  .spin-btn {
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #a78bfa, #7c5cff 60%, #4c1d95);
+    border: none;
+    color: #fff;
+    font-size: 60px;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 0 60px rgba(124,92,255,0.6), 0 0 120px rgba(124,92,255,0.3), inset 0 -10px 30px rgba(0,0,0,0.3);
+    transition: transform .1s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .spin-btn:active { transform: scale(0.94); }
+  .spin-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .spin-btn::before {
+    content: '';
+    position: absolute; inset: -12px;
+    border-radius: 50%;
+    border: 2px solid rgba(124,92,255,0.4);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.08); opacity: 0.2; }
+  }
+  .spin-hint {
+    margin-top: 20px;
+    font-size: 14px; color: var(--text3); font-weight: 700;
+  }
+
+  /* Section title */
+  .section-title {
+    font-size: 12px; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    font-weight: 900; margin-bottom: 12px;
+  }
+
+  /* Wheel */
+  .wheel-wrap {
+    position: relative;
+    width: 280px; height: 280px;
+    margin: 20px auto 30px;
+  }
+  .wheel-canvas {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    box-shadow: 0 0 60px rgba(124,92,255,0.4), 0 0 100px rgba(124,92,255,0.2);
+    transition: transform 4s cubic-bezier(0.17, 0.67, 0.3, 1);
+  }
+  .wheel-pointer {
+    position: absolute;
+    top: -10px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 32px;
+    z-index: 10;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  }
+
+  /* Question card */
+  .question-card {
     background: var(--card);
-    border-radius: 20px;
-    overflow: hidden;
-    margin-bottom: 16px;
     border: 1px solid var(--border);
-    transition: transform .2s, border-color .2s;
-    animation: cardIn .35s ease both;
+    border-radius: 20px;
+    padding: 22px;
+    margin-bottom: 16px;
+    animation: cardIn .4s ease;
   }
   @keyframes cardIn {
-    from { opacity: 0; transform: translateY(12px); }
+    from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: none; }
   }
-
-  .giveaway-photo-wrap {
-    position: relative;
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    background: linear-gradient(135deg, #1e1f3a, #2a1e3d);
-  }
-  .giveaway-photo {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .giveaway-photo-placeholder {
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 72px;
-    background:
-      radial-gradient(circle at 30% 30%, rgba(124,92,255,0.35), transparent 60%),
-      radial-gradient(circle at 70% 70%, rgba(255,92,157,0.25), transparent 60%),
-      linear-gradient(135deg, #1a1b30, #241a35);
-  }
-  .giveaway-badge {
-    position: absolute;
-    top: 12px; right: 12px;
+  .question-level {
+    display: inline-flex; align-items: center; gap: 6px;
     padding: 6px 12px;
-    border-radius: 100px;
-    font-size: 11px;
-    font-weight: 900;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    backdrop-filter: blur(10px);
-  }
-  .giveaway-badge.active {
-    background: rgba(46,230,142,0.15);
-    color: var(--success);
-    border: 1px solid rgba(46,230,142,0.4);
-  }
-  .giveaway-badge.active::before {
-    content: '';
-    display: inline-block;
-    width: 6px; height: 6px;
-    background: var(--success);
-    border-radius: 50%;
-    margin-right: 6px;
-    vertical-align: middle;
-    animation: pulseDot 1.5s infinite;
-  }
-  @keyframes pulseDot {
-    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(46,230,142,0.7); }
-    50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(46,230,142,0); }
-  }
-  .giveaway-badge.finished {
-    background: rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.7);
-    border: 1px solid rgba(255,255,255,0.15);
-  }
-
-  .giveaway-photo-wrap::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 60px;
-    background: linear-gradient(180deg, transparent, rgba(21,24,39,0.9));
-    pointer-events: none;
-  }
-
-  .giveaway-body { padding: 16px; }
-
-  .giveaway-title {
-    font-size: 18px;
-    font-weight: 900;
-    line-height: 1.25;
-    margin-bottom: 8px;
-    letter-spacing: -0.3px;
-  }
-  .giveaway-desc {
-    font-size: 13px;
-    color: var(--text2);
-    line-height: 1.5;
-    margin-bottom: 12px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  .giveaway-prize {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 12px;
     background: rgba(255,201,60,0.12);
     border: 1px solid rgba(255,201,60,0.3);
     border-radius: 100px;
-    font-size: 12px;
-    font-weight: 800;
+    font-size: 12px; font-weight: 900;
     color: var(--gold);
-    margin-bottom: 12px;
-  }
-
-  .giveaway-meta {
-    display: flex;
-    gap: 14px;
-    font-size: 12px;
-    color: var(--text2);
-    font-weight: 600;
     margin-bottom: 14px;
-    flex-wrap: wrap;
   }
-  .giveaway-meta span {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .giveaway-meta b { color: #fff; font-weight: 800; }
-
-  /* Кнопки */
-  .giveaway-footer {
-    display: flex;
-    gap: 8px;
-  }
-  .btn {
-    border: none;
-    border-radius: 12px;
-    font-family: inherit;
-    font-weight: 800;
-    cursor: pointer;
-    transition: transform .15s, opacity .2s;
-    white-space: nowrap;
-    font-size: 13px;
-  }
-  .btn:active { transform: scale(0.96); }
-  .btn-primary {
-    flex: 1;
-    padding: 13px 18px;
-    background: linear-gradient(135deg, #7c5cff, #6647e0);
-    color: #fff;
-    font-size: 14px;
-    box-shadow: 0 6px 18px rgba(124,92,255,0.35);
-  }
-  .btn-primary.joined {
-    background: linear-gradient(135deg, #2ee68e, #20b877);
-    box-shadow: 0 6px 18px rgba(46,230,142,0.3);
-  }
-  .btn-primary:disabled {
-    background: rgba(255,255,255,0.08);
-    color: var(--text3);
-    box-shadow: none;
-    cursor: not-allowed;
-  }
-  .btn-icon {
-    padding: 13px 15px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid var(--border);
-    color: var(--text);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 46px;
-    font-size: 14px;
-  }
-  .btn-icon.danger {
-    background: rgba(255,77,109,0.1);
-    color: var(--danger);
-    border-color: rgba(255,77,109,0.3);
-  }
-  .btn-full {
-    width: 100%;
-    padding: 13px;
-    margin-top: 10px;
-    background: rgba(255,77,109,0.1);
-    color: var(--danger);
-    border: 1px solid rgba(255,77,109,0.3);
-    font-size: 13px;
-  }
-  .btn-full:active { background: rgba(255,77,109,0.18); }
-
-  /* Победитель */
-  .winner {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px;
-    background: linear-gradient(135deg, rgba(255,201,60,0.12), rgba(255,201,60,0.04));
-    border: 1px solid rgba(255,201,60,0.3);
-    border-radius: 14px;
-    margin-bottom: 4px;
-  }
-  .winner-icon {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #ffc93c, #f59e0b);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    flex-shrink: 0;
-    box-shadow: 0 6px 16px rgba(255,201,60,0.35);
-  }
-  .winner-info { flex: 1; min-width: 0; }
-  .winner-label {
-    font-size: 10px;
-    color: rgba(255,201,60,0.75);
-    text-transform: uppercase;
-    font-weight: 900;
-    letter-spacing: 0.8px;
-    margin-bottom: 2px;
-  }
-  .winner-name {
-    font-size: 15px;
-    font-weight: 900;
-    color: var(--gold);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .winner.none {
-    background: rgba(255,255,255,0.04);
-    border-color: var(--border);
-  }
-  .winner.none .winner-icon {
-    background: rgba(255,255,255,0.08);
-    box-shadow: none;
-    color: var(--text3);
-  }
-  .winner.none .winner-label { color: var(--text3); }
-  .winner.none .winner-name { color: var(--text2); font-weight: 700; }
-
-  /* Форма */
-  .form-card {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 20px;
-    border: 1px solid var(--border);
-  }
-  .form-title {
-    font-size: 20px;
-    font-weight: 900;
+  .question-text {
+    font-size: 19px; font-weight: 800;
+    line-height: 1.35; letter-spacing: -0.3px;
     margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    letter-spacing: -0.4px;
   }
-  .field { margin-bottom: 16px; }
-  .field-label {
-    display: block;
-    font-size: 11px;
-    color: var(--text3);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    font-weight: 900;
-    margin-bottom: 8px;
-  }
-  .input, .textarea {
-    width: 100%;
-    padding: 14px 16px;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-    font-family: inherit;
+  .answers { display: flex; flex-direction: column; gap: 10px; }
+  .answer {
+    padding: 16px 18px;
     background: rgba(255,255,255,0.04);
     border: 1.5px solid var(--border);
     border-radius: 14px;
-    outline: none;
-    transition: all .2s;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  .input:focus, .textarea:focus {
-    border-color: var(--accent);
-    background: rgba(124,92,255,0.08);
-    box-shadow: 0 0 0 4px rgba(124,92,255,0.12);
-  }
-  .input::placeholder, .textarea::placeholder { color: var(--text3); }
-  .textarea {
-    resize: vertical;
-    min-height: 90px;
-    line-height: 1.5;
-  }
-  .form-row { display: flex; gap: 10px; }
-  .form-row .field { flex: 1; }
-
-  .form-btn {
-    width: 100%;
-    padding: 17px;
-    border: none;
-    border-radius: 14px;
-    font-size: 16px;
-    font-weight: 900;
+    font-size: 15px; font-weight: 700;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
     font-family: inherit;
-    cursor: pointer;
-    color: #fff;
-    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
-    box-shadow: 0 10px 28px rgba(124,92,255,0.4);
-    margin-top: 8px;
-    letter-spacing: -0.2px;
-    transition: transform .15s, opacity .2s;
-  }
-  .form-btn:active { transform: scale(0.97); }
-  .form-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  /* Фото */
-  .photo-drop {
-    width: 100%;
-    min-height: 150px;
-    background: rgba(255,255,255,0.03);
-    border: 2px dashed rgba(124,92,255,0.35);
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 14px;
-    position: relative;
     transition: all .2s;
-    overflow: hidden;
+    display: flex; align-items: center; gap: 12px;
   }
-  .photo-drop:hover {
-    border-color: var(--accent);
-    background: rgba(124,92,255,0.06);
-  }
-  .photo-drop:active { transform: scale(0.99); }
-  .photo-preview {
-    max-width: 100%;
-    max-height: 220px;
-    border-radius: 10px;
-    display: block;
-  }
-  .photo-remove {
-    position: absolute;
-    top: 10px; right: 10px;
-    width: 32px; height: 32px;
+  .answer:active { transform: scale(0.98); }
+  .answer .letter {
+    width: 28px; height: 28px;
     border-radius: 50%;
-    background: rgba(255,77,109,0.95);
-    color: #fff;
-    border: none;
-    font-size: 15px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    z-index: 2;
+    background: rgba(124,92,255,0.2);
+    color: var(--accent);
+    font-weight: 900; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
   }
-  .photo-placeholder-icon {
-    font-size: 38px;
-    text-align: center;
-    margin-bottom: 8px;
-    filter: opacity(0.7);
+  .answer.correct {
+    background: rgba(46,230,142,0.15);
+    border-color: var(--success);
+    color: var(--success);
   }
-  .photo-placeholder-text {
-    font-size: 13px;
-    color: var(--text3);
-    text-align: center;
-    font-weight: 700;
+  .answer.correct .letter { background: rgba(46,230,142,0.3); color: var(--success); }
+  .answer.wrong {
+    background: rgba(255,77,109,0.15);
+    border-color: var(--danger);
+    color: var(--danger);
   }
-  .photo-status {
-    font-size: 12px;
-    color: var(--text3);
-    margin-top: 8px;
-    text-align: center;
-    font-weight: 700;
-  }
-  .photo-status.success { color: var(--success); }
-  .photo-status.error { color: var(--danger); }
+  .answer.wrong .letter { background: rgba(255,77,109,0.3); color: var(--danger); }
 
-  /* Пусто / загрузка */
-  .empty {
+  /* Result */
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 22px;
     text-align: center;
-    padding: 60px 20px;
-    color: var(--text3);
     animation: cardIn .4s ease;
   }
-  .empty-icon {
-    font-size: 64px;
-    margin-bottom: 14px;
-    opacity: 0.5;
+  .result-icon { font-size: 64px; margin-bottom: 12px; }
+  .result-title { font-size: 24px; font-weight: 900; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .result-title.win { color: var(--success); }
+  .result-title.lose { color: var(--danger); }
+  .result-sub { font-size: 14px; color: var(--text2); margin-bottom: 20px; font-weight: 600; }
+  .result-points {
+    display: inline-block;
+    font-size: 36px; font-weight: 900;
+    color: var(--gold);
+    padding: 8px 20px;
+    background: rgba(255,201,60,0.12);
+    border: 1px solid rgba(255,201,60,0.3);
+    border-radius: 14px;
+    margin-bottom: 22px;
+    letter-spacing: -1px;
   }
-  .empty-title {
-    font-size: 16px;
-    font-weight: 800;
-    margin-bottom: 6px;
-    color: var(--text);
-    letter-spacing: -0.2px;
-  }
-  .empty-sub {
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--text3);
-  }
-  .loading {
-    text-align: center;
-    padding: 50px 20px;
-    color: var(--text3);
-    font-size: 13px;
-    font-weight: 700;
-  }
-  .spinner {
-    width: 36px;
-    height: 36px;
-    margin: 0 auto 14px;
-    border: 3px solid rgba(124,92,255,0.15);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.9s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Тост */
+  /* Buttons */
+  .btn {
+    padding: 15px 24px;
+    border: none; border-radius: 14px;
+    font-size: 15px; font-weight: 900;
+    font-family: inherit; cursor: pointer;
+    transition: transform .15s, opacity .2s;
+    letter-spacing: -0.2px;
+    color: #fff;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
+    box-shadow: 0 10px 28px rgba(124,92,255,0.4);
+  }
+  .btn-secondary {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Shop */
+  .shop-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .gift-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .gift-card:active { transform: scale(0.97); }
+  .gift-card.affordable {
+    border-color: rgba(46,230,142,0.4);
+    background: linear-gradient(135deg, rgba(46,230,142,0.08), rgba(46,230,142,0.02));
+  }
+  .gift-emoji { font-size: 44px; margin-bottom: 8px; display: block; }
+  .gift-name { font-size: 14px; font-weight: 800; margin-bottom: 6px; }
+  .gift-price {
+    font-size: 14px; font-weight: 900;
+    color: var(--gold);
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .gift-price.locked { color: var(--text3); }
+
+  /* History */
+  .history-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 8px;
+  }
+  .history-emoji { font-size: 28px; }
+  .history-info { flex: 1; min-width: 0; }
+  .history-name { font-size: 14px; font-weight: 800; }
+  .history-date { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .history-price {
+    font-size: 14px; font-weight: 900;
+    color: var(--gold);
+  }
+  .history-status {
+    font-size: 10px; padding: 3px 8px; border-radius: 100px;
+    text-transform: uppercase; font-weight: 900; letter-spacing: 0.5px;
+    margin-top: 4px;
+    display: inline-block;
+  }
+  .history-status.pending { background: rgba(255,201,60,0.2); color: var(--gold); }
+  .history-status.fulfilled { background: rgba(46,230,142,0.2); color: var(--success); }
+
+  /* Empty */
+  .empty {
+    text-align: center; padding: 50px 20px;
+    color: var(--text3);
+  }
+  .empty-icon { font-size: 60px; margin-bottom: 14px; opacity: 0.5; }
+  .empty-title { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+  .empty-sub { font-size: 13px; line-height: 1.5; }
+
+  /* Toast */
   .toast {
-    position: fixed;
-    left: 50%;
-    bottom: 100px;
+    position: fixed; left: 50%; bottom: 30px;
     padding: 14px 22px;
     border-radius: 14px;
     background: #1a1f33;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 800;
-    z-index: 9999;
-    max-width: 88%;
-    text-align: center;
-    pointer-events: none;
+    color: #fff; font-size: 14px; font-weight: 800;
+    z-index: 9999; max-width: 88%; text-align: center;
     box-shadow: 0 12px 40px rgba(0,0,0,0.6);
     border: 1px solid rgba(255,255,255,0.12);
-    opacity: 0;
-    transform: translate(-50%, 20px);
-    transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    letter-spacing: -0.2px;
+    opacity: 0; transform: translate(-50%, 20px);
+    transition: opacity .25s, transform .35s cubic-bezier(0.34, 1.56, 0.64, 1);
     visibility: hidden;
   }
-  .toast.show {
-    opacity: 1;
-    transform: translate(-50%, 0);
-    visibility: visible;
-  }
-  .toast.success {
-    background: linear-gradient(135deg, #10b981, #059669);
-    border-color: rgba(46,230,142,0.5);
-    box-shadow: 0 12px 40px rgba(16,185,129,0.4);
-  }
-  .toast.error {
-    background: linear-gradient(135deg, #ef4444, #b91c1c);
-    border-color: rgba(255,77,109,0.5);
-    box-shadow: 0 12px 40px rgba(239,68,68,0.4);
-  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); visibility: visible; }
+  .toast.success { background: linear-gradient(135deg, #10b981, #059669); }
+  .toast.error { background: linear-gradient(135deg, #ef4444, #b91c1c); }
 
-  /* FAB админа */
-  .admin-fab {
-    position: fixed;
-    bottom: 24px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
-    border: none;
-    color: #fff;
-    font-size: 28px;
-    font-weight: 400;
-    cursor: pointer;
-    box-shadow: 0 12px 32px rgba(124,92,255,0.55);
-    z-index: 100;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    transition: transform .15s;
-    padding-bottom: 3px;
-  }
-  .admin-fab:active { transform: scale(0.9); }
-  .admin-fab.show { display: flex; }
-
-  /* Кнопка музыки */
-  .audio-btn {
-    position: fixed;
-    bottom: 32px;
-    left: 20px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: rgba(21,24,39,0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #fff;
-    font-size: 20px;
-    cursor: pointer;
-    z-index: 100;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    transition: transform .2s, background .2s;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-    padding: 0;
-  }
-  .audio-btn.show { display: flex; }
-  .audio-btn:active { transform: scale(0.9); }
-  .audio-btn.playing {
-    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
-    border-color: transparent;
-    box-shadow: 0 8px 24px rgba(124,92,255,0.5);
-  }
-  .audio-btn.playing::after {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    border: 2px solid rgba(124,92,255,0.5);
-    animation: audioPulse 1.5s ease-in-out infinite;
-    pointer-events: none;
-  }
-  @keyframes audioPulse {
-    0%, 100% { transform: scale(1); opacity: 0.7; }
-    50% { transform: scale(1.15); opacity: 0; }
-  }
-
-  /* Модалка */
+  /* Modal */
   .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
     z-index: 500;
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
   }
-  .modal-overlay.show {
-    display: flex;
-    animation: fadeIn .2s ease;
-  }
+  .modal-overlay.show { display: flex; animation: fadeIn .25s; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  .modal {
+  .modal-box {
     background: #131624;
-    width: 100%;
-    max-width: 500px;
-    border-radius: 24px 24px 0 0;
-    max-height: 82vh;
-    overflow-y: auto;
-    animation: slideUp .3s cubic-bezier(0.16, 1, 0.3, 1);
-    padding-bottom: 24px;
-    border-top: 1px solid var(--border);
-  }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: none; }
-  }
-
-  .modal-header {
-    padding: 18px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    background: #131624;
-    z-index: 10;
-  }
-  .modal-title {
-    font-size: 17px;
-    font-weight: 900;
-    letter-spacing: -0.3px;
-  }
-  .modal-close {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 24px;
+    max-width: 340px; width: 100%;
+    text-align: center;
     border: 1px solid var(--border);
-    color: var(--text);
-    font-size: 16px;
-    font-weight: 900;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    animation: popIn .35s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
+  @keyframes popIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal-emoji { font-size: 56px; margin-bottom: 12px; }
+  .modal-title { font-size: 20px; font-weight: 900; margin-bottom: 8px; }
+  .modal-text { font-size: 14px; color: var(--text2); line-height: 1.5; margin-bottom: 20px; }
 
-  .participant {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-  }
-  .participant-avatar {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #7c5cff, #ff5c9d);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    font-weight: 900;
-    flex-shrink: 0;
-    color: #fff;
-  }
-  .participant-info { flex: 1; min-width: 0; }
-  .participant-name {
-    font-size: 14px;
-    font-weight: 800;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    letter-spacing: -0.2px;
-  }
-  .participant-username {
-    font-size: 12px;
-    color: var(--text3);
-    margin-top: 2px;
-    font-weight: 600;
-  }
-  .participant-date {
-    font-size: 11px;
-    color: var(--text3);
-    font-weight: 700;
-  }
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="logo"><span class="logo-dot"></span>Розыгрыши</div>
-  <div class="user-badge">
-    <div class="avatar-mini" id="userAvatarMini">?</div>
-    <span id="userNameMini">Гость</span>
-  </div>
+  <div class="logo"><span class="logo-dot"></span>Квиз-Рулетка</div>
 </div>
 
 <div class="main">
 
+  <!-- Balance -->
+  <div class="balance-card">
+    <div class="balance-left">
+      <div class="balance-icon">💰</div>
+      <div>
+        <div class="balance-label">Баланс</div>
+        <div class="balance-value"><span class="star">⭐</span> <span id="balance">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Energy -->
+  <div class="energy-card">
+    <div class="energy-top">
+      <span class="label">⚡ Энергия</span>
+      <span class="val"><span id="energy">0</span> / <span id="maxEnergy">10</span></span>
+    </div>
+    <div class="energy-bar"><div class="energy-fill" id="energyFill"></div></div>
+  </div>
+
+  <!-- Tabs -->
   <div class="tabs">
-    <div class="tab active" data-tab="active">🔥 Активные</div>
-    <div class="tab" data-tab="finished">🏆 Итоги</div>
-    <div class="tab" data-tab="create" id="tabCreate" style="display:none;">➕ Создать</div>
+    <div class="tab active" data-tab="play">🎰 Играть</div>
+    <div class="tab" data-tab="shop">🛍 Магазин</div>
+    <div class="tab" data-tab="history">📜 История</div>
   </div>
 
-  <div id="view-active">
-    <div class="loading" id="loadingActive">
-      <div class="spinner"></div>
-      Загрузка...
+  <!-- PLAY -->
+  <div id="view-play">
+    <!-- Spin screen -->
+    <div id="screen-spin">
+      <div class="wheel-wrap">
+        <div class="wheel-pointer">▼</div>
+        <canvas id="wheelCanvas" class="wheel-canvas" width="280" height="280"></canvas>
+      </div>
+      <div class="spin-wrap">
+        <button class="spin-btn" id="spinBtn" onclick="spin()">🎰</button>
+        <div class="spin-hint" id="spinHint">Крути рулетку!</div>
+      </div>
     </div>
-    <div id="listActive"></div>
-  </div>
 
-  <div id="view-finished" style="display:none;">
-    <div id="listFinished"></div>
-  </div>
-
-  <div id="view-create" style="display:none;">
-    <div class="form-card">
-      <div class="form-title">🎁 Новый розыгрыш</div>
-
-      <div class="field">
-        <label class="field-label">Название</label>
-        <input class="input" id="fTitle" placeholder="Например: Telegram Premium" maxlength="80">
+    <!-- Question screen -->
+    <div id="screen-question" class="hidden">
+      <div class="question-card">
+        <div class="question-level" id="questionLevel">🎯 10 баллов</div>
+        <div class="question-text" id="questionText">Загрузка...</div>
+        <div class="answers" id="answers"></div>
       </div>
+    </div>
 
-      <div class="field">
-        <label class="field-label">Приз</label>
-        <input class="input" id="fPrize" placeholder="Premium на 3 месяца" maxlength="80">
+    <!-- Result screen -->
+    <div id="screen-result" class="hidden">
+      <div class="result-card">
+        <div class="result-icon" id="resultIcon">🎉</div>
+        <div class="result-title" id="resultTitle">Правильно!</div>
+        <div class="result-sub" id="resultSub">Ты угадал</div>
+        <div class="result-points" id="resultPoints">+10 ⭐</div>
+        <button class="btn btn-primary" onclick="backToSpin()">🎰 Крутить ещё</button>
       </div>
-
-      <div class="field">
-        <label class="field-label">Описание</label>
-        <textarea class="textarea" id="fDesc" placeholder="Условия участия..." maxlength="500"></textarea>
-      </div>
-
-      <div class="field">
-        <label class="field-label">Обложка</label>
-        <input type="file" id="fPhotoFile" accept="image/*" style="display:none" onchange="onPhotoSelected(event)">
-        <div class="photo-drop" onclick="document.getElementById('fPhotoFile').click()">
-          <div id="photoPreviewWrap" style="display:none; position:relative;">
-            <img id="photoPreview" class="photo-preview" alt="">
-            <button type="button" class="photo-remove" onclick="event.stopPropagation(); removePhoto();">✕</button>
-          </div>
-          <div id="photoPlaceholder">
-            <div class="photo-placeholder-icon">📸</div>
-            <div class="photo-placeholder-text">Нажми, чтобы выбрать фото</div>
-          </div>
-        </div>
-        <div id="photoStatus" class="photo-status"></div>
-      </div>
-
-      <div class="form-row">
-        <div class="field">
-          <label class="field-label">Длительность</label>
-          <input class="input" id="fHours" type="number" value="24" min="1" max="720">
-        </div>
-        <div class="field" style="flex: 0 0 130px;">
-          <label class="field-label">Ед.</label>
-          <select class="input" id="fUnit">
-            <option value="hours">часов</option>
-            <option value="minutes">минут</option>
-            <option value="days">дней</option>
-          </select>
-        </div>
-      </div>
-
-      <button class="form-btn" id="createBtn" onclick="createGiveaway()">
-        ✨ Создать розыгрыш
-      </button>
     </div>
   </div>
 
-</div>
-
-<button class="admin-fab" id="adminFab" onclick="openCreateTab()">+</button>
-
-<!-- Аудио -->
-<audio id="bgMusic" loop preload="none">
-  <source src="https://gej75636-sudo.github.io/miniapp/music/track.mp3" type="audio/mpeg">
-</audio>
-<button class="audio-btn" id="audioBtn" onclick="toggleMusic()">🔇</button>
-
-<div class="modal-overlay" id="participantsModal" onclick="if(event.target===this)closeParticipants()">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">👥 Участники</div>
-      <button class="modal-close" onclick="closeParticipants()">✕</button>
-    </div>
-    <div id="participantsList"></div>
+  <!-- SHOP -->
+  <div id="view-shop" class="hidden">
+    <div class="section-title">Обменять баллы на подарки</div>
+    <div class="shop-grid" id="shopGrid"></div>
   </div>
+
+  <!-- HISTORY -->
+  <div id="view-history" class="hidden">
+    <div class="section-title">Мои подарки</div>
+    <div id="historyList"></div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script>
-var API_URL = 'https://summer-sound-ec0f.gej75636.workers.dev';
-var ADMIN_ID = 8309824939;
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-emoji" id="modalEmoji">🎁</div>
+    <div class="modal-title" id="modalTitle">Успех!</div>
+    <div class="modal-text" id="modalText"></div>
+    <button class="btn btn-primary" onclick="closeModal()">OK</button>
+  </div>
+</div>
 
+<script>
 // ==========================================================
-// TELEGRAM
+// CONFIG
 // ==========================================================
+var API_URL = 'https://summer-sound-ec0f.gej75636.workers.dev';
+
 var tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
@@ -899,28 +524,19 @@ try { tg.setHeaderColor('#0b0d17'); } catch(e) {}
 try { tg.setBackgroundColor('#0b0d17'); } catch(e) {}
 
 var user = (tg.initDataUnsafe && tg.initDataUnsafe.user) || { id: 0, first_name: 'Гость' };
-var isAdmin = String(user.id) === String(ADMIN_ID);
-
-function initUserUI() {
-  var initials = (user.first_name ? user.first_name[0] : '') + (user.last_name ? user.last_name[0] : '');
-  document.getElementById('userAvatarMini').textContent = (initials || '?').toUpperCase();
-  document.getElementById('userNameMini').textContent = user.first_name || 'Гость';
-  if (isAdmin) {
-    document.getElementById('adminFab').classList.add('show');
-    document.getElementById('tabCreate').style.display = 'block';
-  }
-}
 
 // ==========================================================
-// СОСТОЯНИЕ
+// STATE
 // ==========================================================
-var giveaways = [];
-var myJoins = [];
-var myJoinsKey = 'myJoins_' + (user.id || 0);
-try {
-  var saved = localStorage.getItem(myJoinsKey);
-  if (saved) myJoins = JSON.parse(saved);
-} catch(e) {}
+var state = {
+  balance: 0,
+  energy: 10,
+  maxEnergy: 10,
+  gifts: [],
+  currentSpin: null,
+  spinning: false,
+  wheelAngle: 0,
+};
 
 // ==========================================================
 // API
@@ -934,9 +550,12 @@ function apiRequest(method, path, body) {
       if (xhr.readyState === 4) {
         if (xhr.status >= 200 && xhr.status < 300) {
           try { resolve(JSON.parse(xhr.responseText)); }
-          catch (e) { reject(new Error('Bad JSON')); }
+          catch(e) { reject(new Error('Bad JSON')); }
         } else {
-          reject(new Error('HTTP ' + xhr.status));
+          try {
+            var err = JSON.parse(xhr.responseText);
+            reject(err);
+          } catch(e) { reject(new Error('HTTP ' + xhr.status)); }
         }
       }
     };
@@ -948,550 +567,427 @@ function apiGet(p) { return apiRequest('GET', p); }
 function apiPost(p, b) { return apiRequest('POST', p, b); }
 
 // ==========================================================
-// ЗАГРУЗКА
+// LOAD PROFILE
 // ==========================================================
-function loadGiveaways() {
-  apiGet('/api/giveaways')
-    .then(function(data) { giveaways = data || []; renderAll(); })
-    .catch(function(e) { showToast('Ошибка: ' + e.message, 'error'); })
-    .finally(function() {
-      var l = document.getElementById('loadingActive');
-      if (l) l.style.display = 'none';
-    });
+function loadProfile() {
+  if (!user.id) return;
+  apiGet('/api/quiz/profile/' + user.id).then(function(data) {
+    state.balance = data.balance || 0;
+    state.energy = data.energy || 0;
+    state.maxEnergy = data.maxEnergy || 10;
+    renderProfile();
+  }).catch(function(e) { console.error(e); });
 }
 
-function renderAll() { renderActive(); renderFinished(); }
+function renderProfile() {
+  document.getElementById('balance').textContent = state.balance;
+  document.getElementById('energy').textContent = state.energy;
+  document.getElementById('maxEnergy').textContent = state.maxEnergy;
+  var pct = (state.energy / state.maxEnergy) * 100;
+  document.getElementById('energyFill').style.width = pct + '%';
+  updateShopAffordability();
+}
 
-function renderActive() {
-  var active = giveaways.filter(function(g) { return g.status === 'active'; });
-  var el = document.getElementById('listActive');
-  if (active.length === 0) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">🎈</div>' +
-      '<div class="empty-title">Нет активных розыгрышей</div>' +
-      '<div class="empty-sub">Заходи позже — скоро что-то будет</div></div>';
+// ==========================================================
+// WHEEL
+// ==========================================================
+var SEGMENTS = [
+  { points: 10, color: '#2ee68e', text: '10' },
+  { points: 20, color: '#60a5fa', text: '20' },
+  { points: 30, color: '#a78bfa', text: '30' },
+  { points: 50, color: '#f59e0b', text: '50' },
+  { points: 100, color: '#ef4444', text: '100' },
+  { points: 250, color: '#ffc93c', text: '250' },
+];
+
+function drawWheel() {
+  var c = document.getElementById('wheelCanvas');
+  var ctx = c.getContext('2d');
+  var cx = 140, cy = 140, r = 130;
+  var seg = (Math.PI * 2) / SEGMENTS.length;
+
+  ctx.clearRect(0, 0, 280, 280);
+
+  for (var i = 0; i < SEGMENTS.length; i++) {
+    var startAngle = i * seg - Math.PI / 2;
+    var endAngle = startAngle + seg;
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fillStyle = SEGMENTS[i].color;
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Текст
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(startAngle + seg / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 20px sans-serif';
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur = 4;
+    ctx.fillText(SEGMENTS[i].text, r - 18, 8);
+    ctx.restore();
+  }
+
+  // Центральный круг
+  ctx.beginPath();
+  ctx.arc(cx, cy, 32, 0, Math.PI * 2);
+  ctx.fillStyle = '#0b0d17';
+  ctx.fill();
+  ctx.strokeStyle = '#7c5cff';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+}
+
+function spinWheelTo(index) {
+  var seg = 360 / SEGMENTS.length;
+  // Хотим чтобы указатель (сверху) попал на нужный сегмент
+  // Сегмент 0 начинается с угла -90° (вверх)
+  var targetAngle = 360 * 5 + (360 - index * seg - seg / 2);
+  state.wheelAngle = targetAngle;
+  var canvas = document.getElementById('wheelCanvas');
+  canvas.style.transform = 'rotate(' + targetAngle + 'deg)';
+}
+
+// ==========================================================
+// SPIN
+// ==========================================================
+function spin() {
+  if (state.spinning) return;
+  if (state.energy < 1) {
+    showToast('⚡ Нет энергии. Восстановится через 5 мин', 'error');
     return;
   }
-  el.innerHTML = active.map(function(g) { return renderCard(g, 'active'); }).join('');
-}
 
-function renderFinished() {
-  var finished = giveaways.filter(function(g) { return g.status === 'finished'; });
-  var el = document.getElementById('listFinished');
-  if (finished.length === 0) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">🏆</div>' +
-      '<div class="empty-title">Пока нет завершённых</div>' +
-      '<div class="empty-sub">Итоги розыгрышей появятся здесь</div></div>';
-    return;
-  }
-  el.innerHTML = finished.map(function(g) { return renderCard(g, 'finished'); }).join('');
-}
+  state.spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('spinHint').textContent = 'Крутим...';
 
-function renderCard(g, mode) {
-  var joined = myJoins.indexOf(g.id) !== -1;
+  apiPost('/api/quiz/spin', { userId: user.id }).then(function(data) {
+    // Определяем индекс сегмента по выпавшему уровню
+    var idx = SEGMENTS.findIndex(function(s) { return s.points === data.level; });
+    if (idx === -1) idx = 0;
 
-  var photoHtml;
-  if (g.photoFileId) {
-    photoHtml = '<img class="giveaway-photo" src="' + API_URL + '/api/photo/' + encodeURIComponent(g.photoFileId) + '" alt="">';
-  } else if (g.photoUrl) {
-    photoHtml = '<img class="giveaway-photo" src="' + escapeHtml(g.photoUrl) + '" alt="">';
-  } else {
-    photoHtml = '<div class="giveaway-photo-placeholder">🎁</div>';
-  }
+    // Крутим визуально
+    spinWheelTo(idx);
 
-  var footer = '';
+    state.energy = data.energy;
+    state.currentSpin = data;
+    renderProfile();
 
-  if (mode === 'active') {
-    var btnJoined = joined ? ' joined' : '';
-    var btnText = joined ? '✓ Ты участвуешь' : '🎯 Участвовать';
-    if (isAdmin) {
-      footer = '<div class="giveaway-footer">' +
-        '<button class="btn btn-primary' + btnJoined + '" onclick="toggleJoin(\'' + g.id + '\',' + joined + ')">' + btnText + '</button>' +
-        '<button class="btn btn-icon" onclick="openParticipants(\'' + g.id + '\')">👥</button>' +
-        '<button class="btn btn-icon danger" onclick="pickWinner(\'' + g.id + '\')">🎲</button>' +
-        '</div>';
-    } else {
-      footer = '<div class="giveaway-footer">' +
-        '<button class="btn btn-primary' + btnJoined + '" onclick="toggleJoin(\'' + g.id + '\',' + joined + ')">' + btnText + '</button>' +
-        '<button class="btn btn-icon" onclick="openParticipants(\'' + g.id + '\')">👥</button>' +
-        '</div>';
-    }
-  } else {
-    if (g.winnerId) {
-      var isMe = String(g.winnerId) === String(user.id);
-      footer = '<div class="winner">' +
-        '<div class="winner-icon">' + (isMe ? '🏆' : '🎉') + '</div>' +
-        '<div class="winner-info">' +
-          '<div class="winner-label">' + (isMe ? 'Ты победил!' : 'Победитель') + '</div>' +
-          '<div class="winner-name">' + escapeHtml(g.winnerName || 'Участник') + '</div>' +
-        '</div></div>';
-    } else {
-      footer = '<div class="winner none">' +
-        '<div class="winner-icon">😔</div>' +
-        '<div class="winner-info">' +
-          '<div class="winner-label">Результат</div>' +
-          '<div class="winner-name">Никто не участвовал</div>' +
-        '</div></div>';
-    }
-    if (isAdmin) {
-      footer += '<button class="btn btn-full" onclick="deleteGiveaway(\'' + g.id + '\')">🗑 Удалить</button>';
-    }
-  }
-
-  var metaHtml = '<div class="giveaway-meta">' +
-    '<span>⏰ ' + (mode === 'active' ? formatTimeLeft(g.endsAt) : 'Завершён') + '</span>' +
-    '<span>👥 <b>' + (g.participantCount || 0) + '</b></span>' +
-    '</div>';
-
-  return '<div class="giveaway">' +
-    '<div class="giveaway-photo-wrap">' +
-      photoHtml +
-      '<div class="giveaway-badge ' + mode + '">' + (mode === 'active' ? 'Активен' : 'Завершён') + '</div>' +
-    '</div>' +
-    '<div class="giveaway-body">' +
-      '<div class="giveaway-title">' + escapeHtml(g.title) + '</div>' +
-      (g.description ? '<div class="giveaway-desc">' + escapeHtml(g.description) + '</div>' : '') +
-      (g.prize ? '<div class="giveaway-prize">🏆 ' + escapeHtml(g.prize) + '</div>' : '') +
-      metaHtml +
-      footer +
-    '</div>' +
-  '</div>';
+    setTimeout(function() {
+      showQuestion(data);
+    }, 4200);
+  }).catch(function(err) {
+    state.spinning = false;
+    document.getElementById('spinBtn').disabled = false;
+    document.getElementById('spinHint').textContent = 'Крути рулетку!';
+    showToast(err.error || 'Ошибка', 'error');
+  });
 }
 
 // ==========================================================
-// УЧАСТИЕ
+// QUESTION
 // ==========================================================
-function toggleJoin(id, joined) {
-  if (joined) { showToast('Ты уже участвуешь'); return; }
-  apiPost('/api/join', {
-    giveawayId: id,
+function showQuestion(data) {
+  document.getElementById('screen-spin').classList.add('hidden');
+  document.getElementById('screen-result').classList.add('hidden');
+  document.getElementById('screen-question').classList.remove('hidden');
+
+  document.getElementById('questionLevel').textContent = '🎯 ' + data.level + ' баллов';
+  document.getElementById('questionText').textContent = data.question;
+
+  var letters = ['A', 'B', 'C', 'D'];
+  var html = '';
+  for (var i = 0; i < data.answers.length; i++) {
+    html += '<button class="answer" onclick="answer(' + i + ')">' +
+      '<span class="letter">' + letters[i] + '</span>' +
+      '<span>' + escapeHtml(data.answers[i]) + '</span>' +
+      '</button>';
+  }
+  document.getElementById('answers').innerHTML = html;
+  state.answered = false;
+}
+
+function answer(idx) {
+  if (state.answered) return;
+  state.answered = true;
+
+  var btns = document.querySelectorAll('.answer');
+  btns.forEach(function(b) { b.style.pointerEvents = 'none'; });
+
+  apiPost('/api/quiz/answer', {
     userId: user.id,
+    token: state.currentSpin.token,
+    answer: idx,
+  }).then(function(res) {
+    // Подсветка
+    if (btns[res.correctAnswer]) btns[res.correctAnswer].classList.add('correct');
+    if (!res.correct && btns[idx]) btns[idx].classList.add('wrong');
+
+    state.balance = res.balance;
+    state.energy = state.energy;
+    renderProfile();
+
+    setTimeout(function() {
+      showResult(res);
+    }, 1200);
+  }).catch(function(err) {
+    showToast(err.error || 'Ошибка', 'error');
+    backToSpin();
+  });
+}
+
+function showResult(res) {
+  document.getElementById('screen-question').classList.add('hidden');
+  document.getElementById('screen-result').classList.remove('hidden');
+
+  if (res.correct) {
+    document.getElementById('resultIcon').textContent = '🎉';
+    document.getElementById('resultTitle').textContent = 'Правильно!';
+    document.getElementById('resultTitle').className = 'result-title win';
+    document.getElementById('resultSub').textContent = 'Отличный ответ!';
+    document.getElementById('resultPoints').textContent = '+' + res.points + ' ⭐';
+    document.getElementById('resultPoints').style.display = 'inline-block';
+    playSound('win');
+  } else {
+    document.getElementById('resultIcon').textContent = '😢';
+    document.getElementById('resultTitle').textContent = 'Ошибка';
+    document.getElementById('resultTitle').className = 'result-title lose';
+    document.getElementById('resultSub').textContent = 'Не в этот раз';
+    document.getElementById('resultPoints').textContent = '+0 ⭐';
+    document.getElementById('resultPoints').style.color = 'var(--text3)';
+    playSound('error');
+  }
+}
+
+function backToSpin() {
+  document.getElementById('screen-question').classList.add('hidden');
+  document.getElementById('screen-result').classList.add('hidden');
+  document.getElementById('screen-spin').classList.remove('hidden');
+  document.getElementById('spinBtn').disabled = false;
+  document.getElementById('spinHint').textContent = 'Крути рулетку!';
+  document.getElementById('resultPoints').style.color = '';
+  document.getElementById('resultPoints').style.display = '';
+  state.spinning = false;
+  state.answered = false;
+  loadProfile();
+}
+
+// ==========================================================
+// SHOP
+// ==========================================================
+function loadGifts() {
+  apiGet('/api/quiz/gifts').then(function(gifts) {
+    state.gifts = gifts;
+    renderShop();
+  }).catch(function(e) { console.error(e); });
+}
+
+function renderShop() {
+  var grid = document.getElementById('shopGrid');
+  var html = '';
+  for (var i = 0; i < state.gifts.length; i++) {
+    var g = state.gifts[i];
+    var affordable = state.balance >= g.price;
+    html += '<div class="gift-card ' + (affordable ? 'affordable' : '') + '" onclick="buyGift(\'' + g.id + '\')">' +
+      '<span class="gift-emoji">' + g.emoji + '</span>' +
+      '<div class="gift-name">' + escapeHtml(g.name) + '</div>' +
+      '<div class="gift-price ' + (affordable ? '' : 'locked') + '">⭐ ' + g.price + '</div>' +
+      '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function updateShopAffordability() {
+  var cards = document.querySelectorAll('.gift-card');
+  for (var i = 0; i < cards.length; i++) {
+    var priceEl = cards[i].querySelector('.gift-price');
+    var price = parseInt(priceEl.textContent.replace(/\D/g, ''));
+    if (state.balance >= price) {
+      cards[i].classList.add('affordable');
+      priceEl.classList.remove('locked');
+    } else {
+      cards[i].classList.remove('affordable');
+      priceEl.classList.add('locked');
+    }
+  }
+}
+
+function buyGift(giftId) {
+  var gift = state.gifts.find(function(g) { return g.id === giftId; });
+  if (!gift) return;
+  if (state.balance < gift.price) {
+    showToast('Недостаточно баллов', 'error');
+    return;
+  }
+
+  if (!confirm('Обменять ' + gift.price + ' баллов на ' + gift.emoji + ' ' + gift.name + '?')) return;
+
+  apiPost('/api/quiz/exchange', {
+    userId: user.id,
+    giftId: giftId,
     firstName: user.first_name || '',
-    lastName: user.last_name || '',
     username: user.username || '',
   }).then(function(res) {
-    if (res.error) { showToast(res.error, 'error'); return; }
-    myJoins.push(id);
-    try { localStorage.setItem(myJoinsKey, JSON.stringify(myJoins)); } catch(e) {}
-    showToast('🎉 Участие принято!', 'success');
-    loadGiveaways();
-  }).catch(function(e) { showToast('Ошибка', 'error'); });
-}
-
-// ==========================================================
-// ФОТО
-// ==========================================================
-var photoFileId = '';
-var photoUrl = '';
-
-function onPhotoSelected(event) {
-  var file = event.target.files[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) {
-    setPhotoStatus('Файл больше 5 МБ', 'error');
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var base64 = e.target.result;
-    document.getElementById('photoPreview').src = base64;
-    document.getElementById('photoPreviewWrap').style.display = 'block';
-    document.getElementById('photoPlaceholder').style.display = 'none';
-    setPhotoStatus('⏳ Загрузка...');
-    uploadPhoto(base64, file.type);
-  };
-  reader.readAsDataURL(file);
-}
-
-function uploadPhoto(base64, contentType) {
-  apiPost('/api/upload-photo', { base64: base64, contentType: contentType })
-    .then(function(res) {
-      if (res.error) { setPhotoStatus('Ошибка: ' + res.error, 'error'); return; }
-      photoFileId = res.fileId || '';
-      photoUrl = res.url || '';
-      setPhotoStatus('✅ Фото загружено', 'success');
-    })
-    .catch(function(e) { setPhotoStatus('Ошибка загрузки', 'error'); });
-}
-
-function removePhoto() {
-  photoFileId = '';
-  photoUrl = '';
-  document.getElementById('photoPreviewWrap').style.display = 'none';
-  document.getElementById('photoPlaceholder').style.display = 'block';
-  document.getElementById('fPhotoFile').value = '';
-  setPhotoStatus('');
-}
-
-function setPhotoStatus(text, type) {
-  var el = document.getElementById('photoStatus');
-  el.textContent = text || '';
-  el.className = 'photo-status';
-  if (type) el.classList.add(type);
-}
-
-// ==========================================================
-// СОЗДАНИЕ
-// ==========================================================
-function createGiveaway() {
-  if (!isAdmin) { showToast('Только админ', 'error'); return; }
-  var title = document.getElementById('fTitle').value.trim();
-  var desc = document.getElementById('fDesc').value.trim();
-  var prize = document.getElementById('fPrize').value.trim();
-  var hours = Number(document.getElementById('fHours').value) || 24;
-  var unit = document.getElementById('fUnit').value;
-  if (!title) { showToast('Впиши название', 'error'); return; }
-
-  var durationMs = hours * 3600000;
-  if (unit === 'minutes') durationMs = hours * 60000;
-  if (unit === 'days') durationMs = hours * 86400000;
-
-  var btn = document.getElementById('createBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Создаём...';
-
-  apiPost('/api/create', {
-    adminId: user.id,
-    title: title,
-    description: desc,
-    prize: prize,
-    photoUrl: photoUrl,
-    photoFileId: photoFileId,
-    endsAt: Date.now() + durationMs,
-  }).then(function(res) {
-    if (res.error) { showToast(res.error, 'error'); return; }
-    showToast('✨ Розыгрыш создан!', 'success');
-    playSound('create');
-    document.getElementById('fTitle').value = '';
-    document.getElementById('fDesc').value = '';
-    document.getElementById('fPrize').value = '';
-    document.getElementById('fHours').value = 24;
-    removePhoto();
-    switchTab('active');
-    loadGiveaways();
-  }).catch(function(e) { showToast('Ошибка: ' + e.message, 'error'); })
-    .finally(function() {
-      btn.disabled = false;
-      btn.textContent = '✨ Создать розыгрыш';
-    });
-}
-
-// ==========================================================
-// ВЫБОР ПОБЕДИТЕЛЯ
-// ==========================================================
-function pickWinner(id) {
-  if (!isAdmin) return;
-  if (!confirm('Выбрать случайного победителя?')) return;
-  apiPost('/api/pick-winner', { giveawayId: id, adminId: user.id })
-    .then(function(res) {
-      if (res.error) { showToast(res.error, 'error'); return; }
-      showToast('🏆 Победитель определён!', 'success');
-      playSound('win');
-      loadGiveaways();
-    })
-    .catch(function(e) { showToast('Ошибка', 'error'); });
-}
-
-// ==========================================================
-// УДАЛЕНИЕ
-// ==========================================================
-function deleteGiveaway(id) {
-  if (!isAdmin) return;
-  if (!confirm('Удалить розыгрыш?')) return;
-  apiPost('/api/delete', { giveawayId: id, adminId: user.id })
-    .then(function(res) {
-      if (res.error) { showToast(res.error, 'error'); return; }
-      showToast('🗑 Удалено', 'success');
-      loadGiveaways();
-    })
-    .catch(function(e) { showToast('Ошибка', 'error'); });
-}
-
-// ==========================================================
-// УЧАСТНИКИ
-// ==========================================================
-function openParticipants(id) {
-  apiGet('/api/giveaway/' + id).then(function(data) {
-    var parts = data.participants || [];
-    var el = document.getElementById('participantsList');
-    if (parts.length === 0) {
-      el.innerHTML = '<div class="empty" style="padding:50px 20px;"><div class="empty-icon">👥</div><div class="empty-title">Пусто</div><div class="empty-sub">Ещё никто не участвует</div></div>';
-    } else {
-      el.innerHTML = parts.map(function(p) {
-        var initials = (p.firstName ? p.firstName[0] : '') + (p.lastName ? p.lastName[0] : '');
-        return '<div class="participant">' +
-          '<div class="participant-avatar">' + escapeHtml((initials || '?').toUpperCase()) + '</div>' +
-          '<div class="participant-info">' +
-            '<div class="participant-name">' + escapeHtml([p.firstName, p.lastName].filter(Boolean).join(' ') || 'Участник') + '</div>' +
-            (p.username ? '<div class="participant-username">@' + escapeHtml(p.username) + '</div>' : '') +
-          '</div>' +
-          '<div class="participant-date">' + formatDate(p.joinedAt) + '</div>' +
-        '</div>';
-      }).join('');
+    if (res.error) {
+      showToast(res.error, 'error');
+      return;
     }
-    document.getElementById('participantsModal').classList.add('show');
-  }).catch(function(e) { showToast('Ошибка', 'error'); });
+    state.balance = res.balance;
+    renderProfile();
+    showModal(gift.emoji, 'Заявка отправлена!', 'Админ подарит тебе подарок в Telegram в течение дня. Он придёт тебе в чат с ботом 🎁');
+    loadProfile();
+    loadHistory();
+  }).catch(function(err) {
+    showToast(err.error || 'Ошибка', 'error');
+  });
 }
 
-function closeParticipants() {
-  document.getElementById('participantsModal').classList.remove('show');
+// ==========================================================
+// HISTORY
+// ==========================================================
+function loadHistory() {
+  apiGet('/api/quiz/exchanges/' + user.id).then(function(list) {
+    var el = document.getElementById('historyList');
+    if (!list || list.length === 0) {
+      el.innerHTML = '<div class="empty"><div class="empty-icon">📜</div><div class="empty-title">Пока пусто</div><div class="empty-sub">Купи подарки в магазине</div></div>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < list.length; i++) {
+      var e = list[i];
+      var statusText = e.status === 'fulfilled' ? 'Подарено' : 'В обработке';
+      html += '<div class="history-item">' +
+        '<div class="history-emoji">' + e.giftEmoji + '</div>' +
+        '<div class="history-info">' +
+          '<div class="history-name">' + escapeHtml(e.giftName) + '</div>' +
+          '<div class="history-date">' + formatDate(e.date) + '</div>' +
+          '<span class="history-status ' + e.status + '">' + statusText + '</span>' +
+        '</div>' +
+        '<div class="history-price">⭐ ' + e.price + '</div>' +
+      '</div>';
+    }
+    el.innerHTML = html;
+  }).catch(function(e) { console.error(e); });
 }
 
 // ==========================================================
-// ТАБЫ
+// UI HELPERS
 // ==========================================================
-function switchTab(tab) {
-  var tabs = document.querySelectorAll('.tab');
-  for (var i = 0; i < tabs.length; i++) {
-    tabs[i].classList.toggle('active', tabs[i].getAttribute('data-tab') === tab);
-  }
-  document.getElementById('view-active').style.display = tab === 'active' ? 'block' : 'none';
-  document.getElementById('view-finished').style.display = tab === 'finished' ? 'block' : 'none';
-  document.getElementById('view-create').style.display = tab === 'create' ? 'block' : 'none';
-  document.getElementById('adminFab').style.display = (isAdmin && tab !== 'create') ? 'flex' : 'none';
+function showToast(text, type) {
+  var t = document.getElementById('toast');
+  t.textContent = text;
+  t.className = 'toast';
+  if (type) t.classList.add(type);
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(function() { t.classList.remove('show'); }, 2400);
 }
 
-document.querySelectorAll('.tab').forEach(function(t) {
-  t.addEventListener('click', function() { switchTab(t.getAttribute('data-tab')); });
-});
+function showModal(emoji, title, text) {
+  document.getElementById('modalEmoji').textContent = emoji;
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalText').textContent = text;
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal() { document.getElementById('modal').classList.remove('show'); }
 
-function openCreateTab() { switchTab('create'); }
-
-// ==========================================================
-// УТИЛИТЫ
-// ==========================================================
 function escapeHtml(s) {
   return String(s || '').replace(/[&<>"']/g, function(c) {
     return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
   });
 }
 
-function formatTimeLeft(endsAt) {
-  var diff = endsAt - Date.now();
-  if (diff <= 0) return 'Истёк';
-  var d = Math.floor(diff / 86400000);
-  var h = Math.floor((diff % 86400000) / 3600000);
-  var m = Math.floor((diff % 3600000) / 60000);
-  if (d > 0) return d + 'д ' + h + 'ч';
-  if (h > 0) return h + 'ч ' + m + 'м';
-  return m + 'м';
-}
-
 function formatDate(ts) {
-  return new Date(ts).toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit' });
+  var d = new Date(ts);
+  return d.toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
 }
 
 // ==========================================================
-// 🎵 МУЗЫКА И ЗВУКИ
+// SOUND
 // ==========================================================
-var bgMusic = document.getElementById('bgMusic');
-var audioBtn = document.getElementById('audioBtn');
-var musicEnabled = false;
 var audioCtx = null;
-
-// Проверяем сохранённую настройку
-try {
-  var musicSaved = localStorage.getItem('musicEnabled');
-  if (musicSaved === '1') musicEnabled = true;
-} catch(e) {}
-
-function initAudioCtx() {
+function initAudio() {
   if (audioCtx) return;
-  try {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  } catch(e) {}
+  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
 }
-
-// ==========================================================
-// Звуковые эффекты (генерируются через Web Audio API)
-// ==========================================================
 function playSound(type) {
-  initAudioCtx();
+  initAudio();
   if (!audioCtx) return;
   if (audioCtx.state === 'suspended') audioCtx.resume();
-
   var now = audioCtx.currentTime;
-  var osc, gain;
-
-  if (type === 'join') {
-    // Приятный аккорд C-E-G при участии
-    osc = audioCtx.createOscillator();
-    gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(523.25, now);
-    osc.frequency.setValueAtTime(659.25, now + 0.1);
-    osc.frequency.setValueAtTime(783.99, now + 0.2);
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.15, now + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start(now);
-    osc.stop(now + 0.5);
-  } else if (type === 'win') {
-    // Победная мелодия
-    var notes = [523.25, 659.25, 783.99, 1046.50];
-    notes.forEach(function(freq, i) {
+  if (type === 'win') {
+    [523.25, 659.25, 783.99, 1046.50].forEach(function(f, i) {
       var o = audioCtx.createOscillator();
       var g = audioCtx.createGain();
-      o.type = 'sine';
-      o.frequency.value = freq;
-      var t = now + i * 0.12;
+      o.type = 'sine'; o.frequency.value = f;
+      var t = now + i * 0.1;
       g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.2, t + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-      o.connect(g);
-      g.connect(audioCtx.destination);
-      o.start(t);
-      o.stop(t + 0.4);
+      g.gain.linearRampToValueAtTime(0.15, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t); o.stop(t + 0.35);
     });
   } else if (type === 'error') {
-    osc = audioCtx.createOscillator();
-    gain = audioCtx.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(200, now);
-    osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
-    gain.gain.setValueAtTime(0.1, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start(now);
-    osc.stop(now + 0.2);
-  } else if (type === 'create') {
-    osc = audioCtx.createOscillator();
-    gain = audioCtx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(300, now);
-    osc.frequency.exponentialRampToValueAtTime(900, now + 0.2);
-    gain.gain.setValueAtTime(0.12, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start(now);
-    osc.stop(now + 0.3);
-  }
-}
-
-// ==========================================================
-// Фоновая музыка
-// ==========================================================
-function updateAudioBtn() {
-  if (!audioBtn) return;
-  audioBtn.classList.toggle('playing', musicEnabled);
-  audioBtn.textContent = musicEnabled ? '🔊' : '🔇';
-  audioBtn.classList.add('show');
-}
-
-function playMusic() {
-  if (!bgMusic) return;
-  bgMusic.volume = 0;
-  var p = bgMusic.play();
-  if (p && p.then) {
-    p.then(function() {
-      var v = 0;
-      var fade = setInterval(function() {
-        v += 0.02;
-        if (v >= 0.3) {
-          bgMusic.volume = 0.3;
-          clearInterval(fade);
-        } else {
-          bgMusic.volume = v;
-        }
-      }, 40);
-    }).catch(function(e) {
-      console.log('Autoplay blocked:', e);
-    });
-  }
-}
-
-function stopMusic() {
-  if (!bgMusic) return;
-  var v = bgMusic.volume;
-  var fade = setInterval(function() {
-    v -= 0.03;
-    if (v <= 0) {
-      bgMusic.pause();
-      bgMusic.currentTime = 0;
-      clearInterval(fade);
-    } else {
-      bgMusic.volume = v;
+    var o = audioCtx.createOscillator(); var g = audioCtx.createGain();
+    o.type = 'square';
+    o.frequency.setValueAtTime(200, now);
+    o.frequency.exponentialRampToValueAtTime(100, now + 0.2);
+    g.gain.setValueAtTime(0.08, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(now); o.stop(now + 0.25);
+  } else if (type === 'spin') {
+    // Накрутка
+    for (var i = 0; i < 12; i++) {
+      var o2 = audioCtx.createOscillator(); var g2 = audioCtx.createGain();
+      o2.type = 'sine';
+      o2.frequency.value = 800 + i * 30;
+      var t2 = now + i * 0.05;
+      g2.gain.setValueAtTime(0.05, t2);
+      g2.gain.exponentialRampToValueAtTime(0.001, t2 + 0.08);
+      o2.connect(g2); g2.connect(audioCtx.destination);
+      o2.start(t2); o2.stop(t2 + 0.08);
     }
-  }, 40);
-}
-
-function toggleMusic() {
-  musicEnabled = !musicEnabled;
-  try { localStorage.setItem('musicEnabled', musicEnabled ? '1' : '0'); } catch(e) {}
-  if (musicEnabled) {
-    playMusic();
-  } else {
-    stopMusic();
   }
-  updateAudioBtn();
 }
 
 // ==========================================================
-// Автозапуск музыки после первого тапа
+// TABS
 // ==========================================================
-var firstTapDone = false;
-function handleFirstTap() {
-  if (firstTapDone) return;
-  firstTapDone = true;
-  initAudioCtx();
-
-  if (musicEnabled) {
-    playMusic();
-  }
-  updateAudioBtn();
-
-  document.removeEventListener('click', handleFirstTap);
-  document.removeEventListener('touchstart', handleFirstTap);
-}
-document.addEventListener('click', handleFirstTap);
-document.addEventListener('touchstart', handleFirstTap);
+document.querySelectorAll('.tab').forEach(function(t) {
+  t.addEventListener('click', function() {
+    var tab = t.getAttribute('data-tab');
+    document.querySelectorAll('.tab').forEach(function(x) { x.classList.toggle('active', x === t); });
+    document.getElementById('view-play').classList.toggle('hidden', tab !== 'play');
+    document.getElementById('view-shop').classList.toggle('hidden', tab !== 'shop');
+    document.getElementById('view-history').classList.toggle('hidden', tab !== 'history');
+    if (tab === 'shop') renderShop();
+    if (tab === 'history') loadHistory();
+  });
+});
 
 // ==========================================================
-// ТОСТ
+// AUTO REFRESH ENERGY
 // ==========================================================
-var toastTimer = null;
-function showToast(text, type) {
-  var t = document.getElementById('toast');
-
-  // 🔊 звук
-  if (type === 'success') playSound('join');
-  if (type === 'error') playSound('error');
-
-  if (toastTimer) clearTimeout(toastTimer);
-  t.classList.remove('show');
-  t.className = 'toast';
-
-  setTimeout(function() {
-    t.textContent = text;
-    if (type) t.classList.add(type);
-    void t.offsetWidth;
-    t.classList.add('show');
-
-    toastTimer = setTimeout(function() {
-      t.classList.remove('show');
-    }, 2200);
-  }, 20);
-}
-
-// Автообновление таймеров
-setInterval(function() {
-  var hasActive = giveaways.some(function(g) { return g.status === 'active'; });
-  if (hasActive) renderActive();
-}, 60000);
+setInterval(loadProfile, 60000);
 
 // ==========================================================
-// СТАРТ
+// INIT
 // ==========================================================
-initUserUI();
-loadGiveaways();
-
-// Если музыка уже включена — показываем кнопку сразу
-if (musicEnabled) {
-  updateAudioBtn();
-}
+drawWheel();
+loadProfile();
+loadGifts();
+loadHistory();
 </script>
 </body>
 </html>
